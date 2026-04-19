@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  body { @apply bg-dark text-white font-sans antialiased; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-dark; }
+  ::-webkit-scrollbar-thumb { @apply bg-primary rounded-full; }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-dark text-white font-semibold px-6 py-2.5 rounded-xl transition-all duration-200 active:scale-95;
+  }
+  .btn-outline {
+    @apply border border-white/30 hover:border-white text-white font-semibold px-6 py-2.5 rounded-xl transition-all duration-200 active:scale-95;
+  }
+  .btn-white {
+    @apply bg-white hover:bg-white/90 text-primary font-semibold px-6 py-2.5 rounded-xl transition-all duration-200 active:scale-95;
+  }
+  .card-movie {
+    @apply bg-dark-card rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-black/50;
+  }
+  .input-field {
+    @apply w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30
+           focus:outline-none focus:border-primary focus:bg-white/10 transition-all duration-200;
+  }
+  select.input-field {
+    @apply appearance-none cursor-pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 2.5rem;
+  }
+  select.input-field option {
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+}
+
+/* Hero slide transition */
+.hero-slide-enter { opacity: 0; transform: scale(1.04); }
+.hero-slide-enter-active { opacity: 1; transform: scale(1); transition: opacity 800ms ease, transform 800ms ease; }
+.hero-slide-exit { opacity: 1; transform: scale(1); }
+.hero-slide-exit-active { opacity: 0; transform: scale(0.98); transition: opacity 600ms ease, transform 600ms ease; }
+
+@keyframes heroContentIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-content-in { animation: heroContentIn 600ms ease forwards; }
+
+/* Auth page transition */
+@keyframes authIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes authOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-10px); }
+}
+.auth-page-in  { animation: authIn  300ms ease forwards; }
+.auth-page-out { animation: authOut 200ms ease forwards; }
+
+/* Page transition */
+.page-enter { opacity: 0; transform: translateY(16px); }
+.page-enter-active { opacity: 1; transform: translateY(0); transition: opacity 400ms ease, transform 400ms ease; }
+
+/* datetime-local — giữ nền trắng mặc định của browser */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+}
