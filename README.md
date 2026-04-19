@@ -331,9 +331,13 @@ KhuyenMai (độc lập)
 ---
 
 ## 📸 Giao diện dự án
-![Trang chủ]![alt text](image-1.png)
-![Chi tiết phim][alt text](image-2.png)
-![Dashboard]![alt text](image-3.png)
-![Thanh toán]![alt text](image-4.png)
+#### Giao diện màn hình trang chủ
+<img width="1918" height="910" alt="image" src="https://github.com/user-attachments/assets/2250cfb3-28ee-404d-8dfd-d3ad6f043de0" />
+#### Giao diện màn hình chi tiết phim
+<img width="1919" height="911" alt="Screenshot 2026-04-19 212912" src="https://github.com/user-attachments/assets/55da062a-10f9-4eb5-9172-04e4725aee51" />
+#### Giao diện màn hình đặt vé thành công
+<img width="1919" height="911" alt="Screenshot 2026-04-19 213138" src="https://github.com/user-attachments/assets/d9569f25-51e4-48e0-937a-632c9eaabb41" />
+#### Giao diện màn hình Admin Dashboard
+<img width="1919" height="910" alt="Screenshot 2026-04-19 213021" src="https://github.com/user-attachments/assets/92497518-3ab2-4791-932e-4106db20d679" />
 
 ---
