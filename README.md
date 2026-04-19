@@ -4,20 +4,6 @@
 
 ---
 
-## 📋 Mục lục
-
-- [Tính năng](#-tính-năng)
-- [Tech Stack](#-tech-stack)
-- [Kiến trúc](#-kiến-trúc)
-- [Cấu trúc thư mục](#-cấu-trúc-thư-mục)
-- [Yêu cầu hệ thống](#-yêu-cầu-hệ-thống)
-- [Cài đặt & Chạy](#-cài-đặt--chạy)
-- [Cấu hình môi trường](#-cấu-hình-môi-trường)
-- [API Endpoints](#-api-endpoints)
-- [Database Schema](#-database-schema)
-
----
-
 ## ✨ Tính năng
 
 ### Người dùng
@@ -98,7 +84,7 @@ MovieBooking/
 │   │   ├── Middlewares/             # Exception handling middleware
 │   │   ├── Extensions/
 │   │   ├── appsettings.json         
-│   │   └── appsettings.Example.json 
+│   │   └── appsettings.Example.json # Template cấu hình (không có secrets)
 │   ├── MovieBooking.Application/
 │   │   ├── DTOs/
 │   │   ├── Features/
@@ -122,7 +108,7 @@ MovieBooking/
     │   ├── services/                # API service layer (Axios)
     │   ├── context/                 # React Context (Auth)
     │   └── assets/
-    ├── .env                         # ⚠️ KHÔNG commit
+    ├── .env                         
     ├── .env.example                 # Template biến môi trường
     └── package.json
 ```
@@ -342,20 +328,12 @@ NguoiDung ──< DonDatVe ──< Ve >── Ghe >── PhongChieu >── Rap
 KhuyenMai (độc lập)
 ```
 
-**Entities chính:**
-- `NguoiDung` — Tài khoản người dùng (email unique)
-- `Phim` — Thông tin phim
-- `Rap` — Rạp chiếu phim
-- `PhongChieu` — Phòng chiếu trong rạp
-- `Ghe` — Ghế ngồi (thường / VIP)
-- `LichChieu` — Lịch chiếu phim
-- `DonDatVe` — Đơn đặt vé
-- `Ve` — Vé (1 ghế = 1 vé)
-- `ThanhToan` — Thông tin thanh toán
-- `KhuyenMai` — Mã khuyến mãi
-
 ---
 
-## 📜 License
+## 📸 Giao diện dự án
+![Trang chủ]![alt text](image-1.png)
+![Chi tiết phim][alt text](image-2.png)
+![Dashboard]![alt text](image-3.png)
+![Thanh toán]![alt text](image-4.png)
 
-MIT License — xem file [LICENSE](LICENSE) để biết thêm chi tiết.
+---
