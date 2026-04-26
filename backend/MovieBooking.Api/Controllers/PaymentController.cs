@@ -111,6 +111,7 @@ namespace MovieBooking.Api.Controllers
             if (don.TrangThai == "Paid") return Ok(new { message = "Đơn đã được thanh toán" });
 
             don.TrangThai   = "Paid";
+            don.ExpiredAt   = null; // Đã thanh toán, không cần hết hạn nữa
             don.NgayCapNhat = DateTime.Now;
 
             _dbContext.ThanhToans.Add(new MovieBooking.Domain.Entities.ThanhToan

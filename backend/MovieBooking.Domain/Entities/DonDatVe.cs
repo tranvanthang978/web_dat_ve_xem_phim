@@ -1,4 +1,4 @@
-﻿using MovieBooking.Domain.Common;
+using MovieBooking.Domain.Common;
 
 namespace MovieBooking.Domain.Entities
 {
@@ -6,6 +6,7 @@ namespace MovieBooking.Domain.Entities
     {
         public decimal TongTien { get; set; }
         public string TrangThai { get; set; } = string.Empty; // Pending, Paid, Cancelled, Refunded
+        public DateTime? ExpiredAt { get; set; } // Thời điểm hết hạn giữ ghế (null = không hết hạn)
 
         public int NguoiDungId { get; set; }
         public NguoiDung NguoiDung { get; set; } = null!;

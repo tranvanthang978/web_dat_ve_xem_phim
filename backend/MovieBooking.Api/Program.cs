@@ -35,6 +35,7 @@ builder.Services.AddScoped<IVNPayService, VNPayService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IChatService, GeminiChatService>();
+builder.Services.AddHostedService<MovieBooking.Api.Services.ExpiredBookingCleanupService>();
 
 builder.Services.AddHttpClient("Gemini", client =>
 {

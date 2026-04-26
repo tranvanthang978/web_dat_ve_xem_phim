@@ -380,7 +380,7 @@ export default function BookingPage() {
           {/* Buttons */}
           <div className="flex gap-3">
             <Link
-              to="/ve-cua-toi"
+              to="/tai-khoan?tab=tickets"
               className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold text-sm py-3 rounded-xl transition-colors text-center"
             >
               Xem vé của tôi

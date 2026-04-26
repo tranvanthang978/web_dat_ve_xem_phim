@@ -150,6 +150,14 @@ namespace MovieBooking.Infrastructure.Services
             if (isSuccess && don.TrangThai != BookingStatus.Paid.ToString())
             {
                 don.TrangThai    = BookingStatus.Paid.ToString();
+                don.ExpiredAt    = null; // Đã thanh toán, không cần hết hạn nữa
+                don.NgayCapNhat  = DateTime.Now;
+                _context.DonDatVes.Update(don);
+            }
+            else if (!isSuccess && don.TrangThai == BookingStatus.Pending.ToString())
+            {
+                // User hủy giao dịch (code 24) hoặc lỗi thanh toán → hủy đơn, nhả ghế
+                don.TrangThai    = BookingStatus.Cancelled.ToString();
                 don.NgayCapNhat  = DateTime.Now;
                 _context.DonDatVes.Update(don);
             }

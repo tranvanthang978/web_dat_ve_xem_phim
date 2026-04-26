@@ -96,7 +96,7 @@ export default function PaymentResult() {
 
           {/* Buttons */}
           <div className="flex gap-3">
-            <Link to="/ve-cua-toi" className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold text-sm py-3 rounded-xl transition-colors text-center">
+            <Link to="/tai-khoan?tab=tickets" className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold text-sm py-3 rounded-xl transition-colors text-center">
               Xem vé của tôi
             </Link>
             <Link to="/phim" className="flex-1 border border-white/20 hover:border-white/40 text-white/70 hover:text-white font-bold text-sm py-3 rounded-xl transition-colors text-center">
@@ -134,7 +134,7 @@ export default function PaymentResult() {
 
         <div className="flex flex-col gap-3">
           {isSuccess && (
-            <Link to="/ve-cua-toi" className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-colors">
+            <Link to="/tai-khoan?tab=tickets" className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-colors">
               Xem vé của tôi
             </Link>
           )}

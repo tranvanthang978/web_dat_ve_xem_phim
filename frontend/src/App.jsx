@@ -111,7 +111,7 @@ export default function App() {
           {/* Protected routes */}
           <Route path="/dat-ve/:lichChieuId" element={<Layout><ProtectedRoute><BookingPage /></ProtectedRoute></Layout>} />
           <Route path="/payment/result" element={<Layout><PaymentResult /></Layout>} />
-          <Route path="/ve-cua-toi" element={<Layout><ProtectedRoute><MyTickets /></ProtectedRoute></Layout>} />
+          <Route path="/ve-cua-toi" element={<Navigate to="/tai-khoan?tab=tickets" replace />} />
           <Route path="/tai-khoan" element={<Layout><ProtectedRoute><AccountInfo /></ProtectedRoute></Layout>} />
 
           {/* 404 */}

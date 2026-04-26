@@ -220,7 +220,7 @@ export default function Navbar() {
                         </Link>
 
                         <Link
-                          to="/ve-cua-toi"
+                          to="/tai-khoan?tab=tickets"
                           onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-3 px-6 py-3 text-sm text-white/70 hover:text-white hover:bg-primary/10 transition-colors group"
                         >
