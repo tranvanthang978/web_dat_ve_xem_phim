@@ -3,7 +3,7 @@ namespace MovieBooking.Application.DTOs.Promotion
     public class KhuyenMaiDto
     {
         public int Id { get; set; }
-        public string MaKhuyenMai { get; set; }
+        public string MaKhuyenMai { get; set; } = string.Empty;
         public decimal GiaTriGiam { get; set; }
         public DateTime NgayBatDau { get; set; }
         public DateTime NgayKetThuc { get; set; }
@@ -15,7 +15,7 @@ namespace MovieBooking.Application.DTOs.Promotion
 
     public class CreateKhuyenMaiDto
     {
-        public string MaKhuyenMai { get; set; }
+        public string MaKhuyenMai { get; set; } = string.Empty;
         public decimal GiaTriGiam { get; set; }
         public DateTime NgayBatDau { get; set; }
         public DateTime NgayKetThuc { get; set; }
@@ -25,7 +25,7 @@ namespace MovieBooking.Application.DTOs.Promotion
 
     public class UpdateKhuyenMaiDto
     {
-        public string MaKhuyenMai { get; set; }
+        public string MaKhuyenMai { get; set; } = string.Empty;
         public decimal GiaTriGiam { get; set; }
         public DateTime NgayBatDau { get; set; }
         public DateTime NgayKetThuc { get; set; }

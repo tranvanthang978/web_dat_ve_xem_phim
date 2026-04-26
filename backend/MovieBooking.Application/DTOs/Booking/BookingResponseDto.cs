@@ -6,6 +6,9 @@
         public decimal TongTien { get; set; }
         public string TrangThai { get; set; } = string.Empty;
         public DateTime NgayTao { get; set; }
+
+        // Thông tin lịch chiếu
+        public int LichChieuId { get; set; }
         public string TenPhim { get; set; } = string.Empty;
         public DateTime GioBatDau { get; set; }
         public string TenRap { get; set; } = string.Empty;

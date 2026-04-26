@@ -48,6 +48,19 @@ namespace MovieBooking.Infrastructure.Services
             return khuyenMai == null ? null : _mapper.Map<KhuyenMaiDto>(khuyenMai);
         }
 
+        public async Task<KhuyenMaiDto?> ValidateMaKhuyenMaiAsync(string ma)
+        {
+            var now = DateTime.UtcNow;
+            var km = await _context.KhuyenMais.FirstOrDefaultAsync(k =>
+                k.MaKhuyenMai.ToLower() == ma.ToLower() &&
+                k.ConHieuLuc &&
+                k.NgayBatDau <= now &&
+                k.NgayKetThuc >= now &&
+                (k.SoLuotSuDung == 0 || k.SoLuotDaDung < k.SoLuotSuDung));
+
+            return km == null ? null : _mapper.Map<KhuyenMaiDto>(km);
+        }
+
         public async Task<KhuyenMaiDto> CreateKhuyenMaiAsync(CreateKhuyenMaiDto createKhuyenMaiDto)
         {
             if (createKhuyenMaiDto.NgayBatDau >= createKhuyenMaiDto.NgayKetThuc)

@@ -12,8 +12,8 @@ namespace MovieBooking.Application.Validators
 
             RuleFor(x => x.PhuongThuc)
                 .NotEmpty().WithMessage("Phương thức thanh toán không được để trống")
-                .Must(x => new[] { "VNPay", "Momo", "TienMat" }.Contains(x))
-                .WithMessage("Phương thức thanh toán phải là VNPay, Momo hoặc TienMat");
+                .Must(x => new[] { "VNPay", "ChuyenKhoan" }.Contains(x))
+                .WithMessage("Phương thức thanh toán phải là VNPay hoặc ChuyenKhoan");
         }
     }
 }
