@@ -17,7 +17,6 @@ namespace MovieBooking.Api.Controllers
             _rapService = rapService;
         }
 
-        // ==================== RẠP ====================
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -94,7 +93,6 @@ namespace MovieBooking.Api.Controllers
             }
         }
 
-        // ==================== PHÒNG CHIẾU ====================
 
         [HttpGet("{rapId}/phong-chieu")]
         public async Task<IActionResult> GetPhongChieus(int rapId)
@@ -164,7 +162,6 @@ namespace MovieBooking.Api.Controllers
             return Ok(ApiResponse<object?>.SuccessResponse(null, message));
         }
 
-        // ==================== GHẾ ====================
 
         [HttpGet("phong-chieu/{phongChieuId}/ghe")]
         public async Task<IActionResult> GetGhes(int phongChieuId)

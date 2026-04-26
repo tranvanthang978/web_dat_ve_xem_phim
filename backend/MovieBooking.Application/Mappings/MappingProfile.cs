@@ -14,16 +14,11 @@ namespace MovieBooking.Application.Mappings
     {
         public MappingProfile()
         {
-            // Phim
             CreateMap<Phim, PhimDto>();
             CreateMap<CreatePhimDto, Phim>();
-
-            // Rap
             CreateMap<Rap, RapDto>();
             CreateMap<CreateRapDto, Rap>();
             CreateMap<UpdateRapDto, Rap>();
-
-            // PhongChieu — tính SoHangGhe/SoGheMotHang từ danh sách ghế
             CreateMap<PhongChieu, PhongChieuDto>()
                 .ForMember(dest => dest.TenRap, opt => opt.MapFrom(src =>
                     src.Rap != null ? src.Rap.TenRap : string.Empty))
@@ -40,18 +35,12 @@ namespace MovieBooking.Application.Mappings
                         .Select(g => ParseSeatNumber(g.SoGhe))
                         .DefaultIfEmpty(0)
                         .Max()));
-
-            // Ghe
             CreateMap<Ghe, GheDto>();
-
-            // LichChieu
             CreateMap<LichChieu, LichChieuDto>()
                 .ForMember(dest => dest.TenPhim,  opt => opt.MapFrom(src => src.Phim.TenPhim))
                 .ForMember(dest => dest.TenPhong, opt => opt.MapFrom(src => src.PhongChieu.TenPhong))
                 .ForMember(dest => dest.TenRap,   opt => opt.MapFrom(src => src.PhongChieu.Rap.TenRap));
             CreateMap<CreateLichChieuDto, LichChieu>();
-
-            // DonDatVe
             CreateMap<DonDatVe, BookingResponseDto>()
                 .ForMember(dest => dest.LichChieuId,  opt => opt.MapFrom(src => src.LichChieuId))
                 .ForMember(dest => dest.TenPhim,      opt => opt.MapFrom(src => src.LichChieu.Phim.TenPhim))
@@ -59,14 +48,10 @@ namespace MovieBooking.Application.Mappings
                 .ForMember(dest => dest.TenRap,       opt => opt.MapFrom(src => src.LichChieu.PhongChieu.Rap.TenRap))
                 .ForMember(dest => dest.TenPhong,     opt => opt.MapFrom(src => src.LichChieu.PhongChieu.TenPhong))
                 .ForMember(dest => dest.DanhSachGhe,  opt => opt.MapFrom(src => src.Ves.Select(v => v.Ghe.SoGhe).ToList()));
-
-            // NguoiDung
             CreateMap<RegisterDto, NguoiDung>()
                 .ForMember(dest => dest.MatKhauHash, opt => opt.Ignore())
                 .ForMember(dest => dest.VaiTro,      opt => opt.MapFrom(src => "KhachHang"));
             CreateMap<NguoiDung, NguoiDungDto>();
-
-            // KhuyenMai
             CreateMap<KhuyenMai, KhuyenMaiDto>();
             CreateMap<CreateKhuyenMaiDto, KhuyenMai>();
             CreateMap<UpdateKhuyenMaiDto, KhuyenMai>();

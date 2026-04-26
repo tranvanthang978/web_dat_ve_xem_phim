@@ -22,10 +22,6 @@ namespace MovieBooking.Api.Controllers
             _dbContext = dbContext;
         }
 
-        /// <summary>
-        /// POST /api/payment/vnpay/create
-        /// Tạo URL thanh toán VNPay cho đơn đặt vé
-        /// </summary>
         [HttpPost("vnpay/create")]
         [Authorize]
         public async Task<IActionResult> CreateVNPayPayment([FromBody] CreateVNPayRequest request)
@@ -42,10 +38,6 @@ namespace MovieBooking.Api.Controllers
             return Ok(new { paymentUrl });
         }
 
-        /// <summary>
-        /// GET /api/payment/vnpay/callback
-        /// VNPay redirect về đây sau khi thanh toán (không cần auth)
-        /// </summary>
         [HttpGet("vnpay/callback")]
         [AllowAnonymous]
         public async Task<IActionResult> VNPayCallback()
@@ -76,10 +68,6 @@ namespace MovieBooking.Api.Controllers
             return Redirect($"{frontendBase}/payment/result?status=failed&orderId={donDatVeId}&message={Uri.EscapeDataString(message)}");
         }
 
-        /// <summary>
-        /// GET /api/payment/bank-transfer/info/{donDatVeId}
-        /// Lấy thông tin QR chuyển khoản cho đơn đặt vé
-        /// </summary>
         [HttpGet("bank-transfer/info/{donDatVeId}")]
         [Authorize]
         public async Task<IActionResult> GetBankTransferInfo(int donDatVeId)
@@ -111,10 +99,6 @@ namespace MovieBooking.Api.Controllers
             return Ok(new { bankName, accountNumber, accountName, amount, description, qrUrl });
         }
 
-        /// <summary>
-        /// POST /api/payment/bank-transfer/confirm
-        /// Người dùng xác nhận đã chuyển khoản → cập nhật trạng thái + gửi mail
-        /// </summary>
         [HttpPost("bank-transfer/confirm")]
         [Authorize]
         public async Task<IActionResult> ConfirmBankTransfer([FromBody] BankTransferConfirmRequest request)

@@ -13,21 +13,16 @@ using MovieBooking.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DbContext
 builder.Services.AddDbContext<MovieBookingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-// FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<MappingProfile>();
 
-// Repositories
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-// Services
 builder.Services.AddScoped<IPasswordHasher, Sha256PasswordHasher>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPhimService, PhimService>();
@@ -41,13 +36,11 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IChatService, GeminiChatService>();
 
-// HttpClient cho Gemini API
 builder.Services.AddHttpClient("Gemini", client =>
 {
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
-// JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secret = jwtSettings["Secret"]!;
 
@@ -72,14 +65,12 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Controllers
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
     });
 
-// CORS
 builder.Services.AddCors(options =>
 {
     var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
@@ -94,7 +85,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Swagger với JWT support
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -130,7 +120,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowSpecificOrigins");
-// Chỉ redirect HTTPS trong production
 if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 app.UseAuthentication();

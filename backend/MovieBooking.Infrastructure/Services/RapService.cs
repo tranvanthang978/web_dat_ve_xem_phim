@@ -20,7 +20,6 @@ namespace MovieBooking.Infrastructure.Services
             _context = context;
         }
 
-        // ==================== RẠP ====================
 
         public async Task<IEnumerable<RapDto>> GetAllRapsAsync()
         {
@@ -76,7 +75,6 @@ namespace MovieBooking.Infrastructure.Services
             return true;
         }
 
-        // ==================== PHÒNG CHIẾU ====================
 
         public async Task<IEnumerable<PhongChieuDto>> GetPhongChieusByRapIdAsync(int rapId)
         {
@@ -204,7 +202,6 @@ namespace MovieBooking.Infrastructure.Services
             return (true, "Xóa phòng chiếu thành công");
         }
 
-        // ==================== GHẾ ====================
 
         public async Task<IEnumerable<GheDto>> GetGhesByPhongChieuAsync(int phongChieuId)
         {

@@ -15,10 +15,6 @@ namespace MovieBooking.Api.Controllers
             _chatService = chatService;
         }
 
-        /// <summary>
-        /// POST /api/chat
-        /// Gửi tin nhắn tới AI chatbot
-        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Chat([FromBody] ChatRequestDto request)
         {

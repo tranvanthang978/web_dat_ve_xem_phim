@@ -22,7 +22,6 @@ namespace MovieBooking.Api.Controllers
             _bookingService = bookingService ?? throw new ArgumentNullException(nameof(bookingService));
         }
 
-        /// <summary>GET /api/admin/thong-ke — Dashboard stats</summary>
         [HttpGet("thong-ke")]
         public async Task<IActionResult> GetThongKe()
         {
@@ -83,7 +82,6 @@ namespace MovieBooking.Api.Controllers
             return Ok(ApiResponse<object>.SuccessResponse(stats));
         }
 
-        /// <summary>GET /api/admin/export/bookings — Xuất CSV đơn đặt vé</summary>
         [HttpGet("export/bookings")]
         public async Task<IActionResult> ExportBookingsCsv()
         {
@@ -153,7 +151,6 @@ namespace MovieBooking.Api.Controllers
             return File(result, "text/csv; charset=utf-8", $"DonDatVe_{DateTime.Now:yyyyMMdd_HHmm}.csv");
         }
 
-        /// <summary>PUT /api/admin/bookings/{id}/status — Cập nhật trạng thái đơn</summary>
         [HttpPut("bookings/{id}/status")]
         public async Task<IActionResult> UpdateBookingStatus(int id, [FromBody] UpdateBookingStatusRequestDto request)
         {

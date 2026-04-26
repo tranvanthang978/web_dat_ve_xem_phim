@@ -18,7 +18,6 @@ namespace MovieBooking.Api.Controllers
             _nguoiDungService = nguoiDungService;
         }
 
-        /// <summary>GET /api/nguoidung — Lấy danh sách tất cả người dùng (Admin)</summary>
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
@@ -27,7 +26,6 @@ namespace MovieBooking.Api.Controllers
             return Ok(ApiResponse<IEnumerable<NguoiDungDto>>.SuccessResponse(data));
         }
 
-        /// <summary>GET /api/nguoidung/{id} — Lấy thông tin người dùng theo ID</summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -38,7 +36,6 @@ namespace MovieBooking.Api.Controllers
             return Ok(ApiResponse<NguoiDungDto>.SuccessResponse(data));
         }
 
-        /// <summary>PUT /api/nguoidung/{id} — Cập nhật thông tin người dùng</summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateNguoiDungDto dto)
         {
@@ -52,7 +49,6 @@ namespace MovieBooking.Api.Controllers
             return Ok(ApiResponse<NguoiDungDto>.SuccessResponse(data, "Cập nhật thông tin thành công"));
         }
 
-        /// <summary>DELETE /api/nguoidung/{id} — Xóa người dùng (Admin)</summary>
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
@@ -64,7 +60,6 @@ namespace MovieBooking.Api.Controllers
             return Ok(ApiResponse<object?>.SuccessResponse(null, "Xóa người dùng thành công"));
         }
 
-        /// <summary>PUT /api/nguoidung/{id}/doi-mat-khau — Đổi mật khẩu</summary>
         [HttpPut("{id}/doi-mat-khau")]
         public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordDto dto)
         {
@@ -78,7 +73,6 @@ namespace MovieBooking.Api.Controllers
             return Ok(ApiResponse<object?>.SuccessResponse(null, message));
         }
 
-        /// <summary>PUT /api/nguoidung/{id}/vai-tro — Cập nhật vai trò (Admin)</summary>
         [HttpPut("{id}/vai-tro")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateVaiTro(int id, [FromBody] string vaiTro)
