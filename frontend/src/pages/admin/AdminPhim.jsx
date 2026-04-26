@@ -28,6 +28,7 @@ export default function AdminPhim() {
   useEffect(() => { load() }, [])
 
   const openCreate = () => { setForm(EMPTY); setError(''); setModal({ mode: 'create' }) }
+  const openView = (p) => { setError(''); setModal({ mode: 'view', data: p }) }
   const openEdit = (p) => { setForm({ ...EMPTY, ...p, backdropUrl: p.backdropUrl || '' }); setError(''); setModal({ mode: 'edit', id: p.id }) }
   const closeModal = () => setModal(null)
 
@@ -162,12 +163,18 @@ export default function AdminPhim() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => openEdit(p)} className="text-white/40 hover:text-white transition-colors p-1.5 rounded hover:bg-white/5">
+                      <button onClick={() => openView(p)} className="text-white/40 hover:text-blue-400 transition-colors p-1.5 rounded hover:bg-blue-400/5" title="Xem chi tiết">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      </button>
+                      <button onClick={() => openEdit(p)} className="text-white/40 hover:text-white transition-colors p-1.5 rounded hover:bg-white/5" title="Chỉnh sửa">
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                       </button>
-                      <button onClick={() => setDeleteId(p.id)} className="text-white/40 hover:text-red-400 transition-colors p-1.5 rounded hover:bg-red-400/5">
+                      <button onClick={() => setDeleteId(p.id)} className="text-white/40 hover:text-red-400 transition-colors p-1.5 rounded hover:bg-red-400/5" title="Xóa">
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
@@ -187,13 +194,48 @@ export default function AdminPhim() {
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-white/5">
-              <h2 className="text-lg font-bold text-white">{modal.mode === 'create' ? 'Thêm phim mới' : 'Chỉnh sửa phim'}</h2>
+              <h2 className="text-lg font-bold text-white">
+                {modal.mode === 'view' ? 'Chi tiết phim' : modal.mode === 'create' ? 'Thêm phim mới' : 'Chỉnh sửa phim'}
+              </h2>
               <button onClick={closeModal} className="text-white/40 hover:text-white transition-colors">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
+            
+            {modal.mode === 'view' ? (
+              <div className="p-6 space-y-4">
+                <div className="flex items-center gap-4">
+                  {modal.data.posterUrl ? (
+                    <img src={modal.data.posterUrl} alt="" className="w-14 h-20 object-cover rounded shrink-0" onError={e => e.target.style.display='none'} />
+                  ) : (
+                    <div className="w-14 h-20 rounded bg-primary/20 flex items-center justify-center text-primary text-xl font-bold shrink-0">
+                      {modal.data.tenPhim?.[0]?.toUpperCase() || '?'}
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-base font-bold text-white">{modal.data.tenPhim}</p>
+                    <span className={`inline-block mt-1 text-xs font-semibold px-2 py-0.5 rounded-full ${modal.data.dangChieu ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
+                      {modal.data.dangChieu ? 'Đang chiếu' : 'Sắp chiếu'}
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-3 pt-2">
+                  <Row label="ID" value={`#${modal.data.id}`} />
+                  <Row label="Thể loại" value={modal.data.theLoai || '—'} />
+                  <Row label="Thời lượng" value={`${modal.data.thoiLuong} phút`} />
+                  <Row label="Đạo diễn" value={modal.data.daoDien || '—'} />
+                  <Row label="Diễn viên" value={modal.data.dienVien || '—'} />
+                  <Row label="Xếp hạng" value={`${modal.data.xepHang} / 5`} />
+                  <Row label="Ngày tạo" value={modal.data.ngayTao ? new Date(modal.data.ngayTao).toLocaleDateString('vi-VN') : '—'} />
+                  <Row label="Cập nhật" value={modal.data.ngayCapNhat ? new Date(modal.data.ngayCapNhat).toLocaleDateString('vi-VN') : '—'} />
+                </div>
+                <div className="flex justify-end gap-3 pt-2">
+                  <button onClick={closeModal} className="btn-outline text-sm px-5 py-2">Đóng</button>
+                </div>
+              </div>
+            ) : (
             <form onSubmit={handleSave} className="p-6 space-y-4">
               {error && <p className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-2">{error}</p>}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -249,6 +291,7 @@ export default function AdminPhim() {
                 </button>
               </div>
             </form>
+            )}
           </div>
         </div>
       )}
@@ -293,3 +336,11 @@ export default function AdminPhim() {
   )
 }
 
+function Row({ label, value }) {
+  return (
+    <div className="flex items-center justify-between py-2 border-b border-white/5">
+      <span className="text-xs text-white/40">{label}</span>
+      <span className="text-sm text-white">{value}</span>
+    </div>
+  )
+}

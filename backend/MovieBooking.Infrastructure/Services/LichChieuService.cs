@@ -29,7 +29,7 @@ namespace MovieBooking.Infrastructure.Services
                 .Include(l => l.PhongChieu)
                     .ThenInclude(p => p.Rap)
                 .Where(l => l.PhimId == phimId)
-                .OrderBy(l => l.GioBatDau)
+                .OrderByDescending(l => l.Id)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<LichChieuDto>>(lichChieus);
@@ -42,7 +42,7 @@ namespace MovieBooking.Infrastructure.Services
                 .Include(l => l.PhongChieu)
                     .ThenInclude(p => p.Rap)
                 .Where(l => l.PhongChieuId == phongChieuId)
-                .OrderBy(l => l.GioBatDau)
+                .OrderByDescending(l => l.Id)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<LichChieuDto>>(lichChieus);
@@ -55,7 +55,7 @@ namespace MovieBooking.Infrastructure.Services
                 .Include(l => l.PhongChieu)
                     .ThenInclude(p => p.Rap)
                 .Where(l => l.PhongChieu.RapId == rapId)
-                .OrderBy(l => l.GioBatDau)
+                .OrderByDescending(l => l.Id)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<LichChieuDto>>(lichChieus);

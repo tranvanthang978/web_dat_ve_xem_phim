@@ -23,7 +23,7 @@ namespace MovieBooking.Infrastructure.Services
         public async Task<IEnumerable<KhuyenMaiDto>> GetAllKhuyenMaiAsync()
         {
             var now = DateTime.UtcNow;
-            var khuyenMais = await _context.KhuyenMais.OrderBy(k => k.MaKhuyenMai).ToListAsync();
+            var khuyenMais = await _context.KhuyenMais.OrderByDescending(k => k.Id).ToListAsync();
 
             // Tự động cập nhật ConHieuLuc theo thời gian thực
             bool changed = false;

@@ -22,7 +22,7 @@ namespace MovieBooking.Infrastructure.Services
 
         public async Task<IEnumerable<PhimDto>> GetAllPhimsAsync()
         {
-            var phims = await _unitOfWork.Phims.GetAllAsync();
+            var phims = await _context.Phims.OrderByDescending(p => p.Id).ToListAsync();
             return _mapper.Map<IEnumerable<PhimDto>>(phims);
         }
 
@@ -34,7 +34,7 @@ namespace MovieBooking.Infrastructure.Services
 
         public async Task<IEnumerable<PhimDto>> GetPhimsDangChieuAsync()
         {
-            var phims = await _unitOfWork.Phims.FindAsync(p => p.DangChieu);
+            var phims = await _context.Phims.Where(p => p.DangChieu).OrderByDescending(p => p.Id).ToListAsync();
             return _mapper.Map<IEnumerable<PhimDto>>(phims);
         }
 

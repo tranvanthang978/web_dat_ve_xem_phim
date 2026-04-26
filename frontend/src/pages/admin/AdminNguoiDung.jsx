@@ -243,7 +243,6 @@ export default function AdminNguoiDung() {
                 </div>
                 <div className="flex justify-end gap-3 pt-2">
                   <button onClick={() => setModal(null)} className="btn-outline text-sm px-5 py-2">Đóng</button>
-                  <button onClick={() => setModal({ ...modal, mode: 'edit' })} className="btn-primary text-sm px-5 py-2">Chỉnh sửa</button>
                 </div>
               </div>
             ) : (

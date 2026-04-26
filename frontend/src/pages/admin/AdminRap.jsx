@@ -53,6 +53,7 @@ export default function AdminRap() {
 
   // Rap CRUD
   const openCreateRap = () => { setRapForm(EMPTY_RAP); setError(''); setRapModal({ mode: 'create' }) }
+  const openViewRap = (r) => { setError(''); setRapModal({ mode: 'view', data: r }) }
   const openEditRap = (r) => { setRapForm({ tenRap: r.tenRap, diaChi: r.diaChi, hotline: r.hotline }); setError(''); setRapModal({ mode: 'edit', id: r.id }) }
 
   const handleSaveRap = async (e) => {
@@ -167,7 +168,13 @@ export default function AdminRap() {
                       <p className="text-xs text-white/40 mt-0.5 line-clamp-1">{r.diaChi}</p>
                     </div>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={e => { e.stopPropagation(); openEditRap(r) }} className="p-1.5 text-white/40 hover:text-white rounded hover:bg-white/5 transition-colors">
+                      <button onClick={e => { e.stopPropagation(); openViewRap(r) }} className="p-1.5 text-white/40 hover:text-blue-400 rounded hover:bg-blue-400/5 transition-colors" title="Xem chi tiết">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      </button>
+                      <button onClick={e => { e.stopPropagation(); openEditRap(r) }} className="p-1.5 text-white/40 hover:text-white rounded hover:bg-white/5 transition-colors" title="Chỉnh sửa">
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
@@ -221,7 +228,13 @@ export default function AdminRap() {
                       <p className="text-xs text-white/40 mt-0.5">ID: {p.id}</p>
                     </button>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={e => { e.stopPropagation(); openEditPhong(p); }} className="p-1.5 text-white/40 hover:text-white rounded hover:bg-white/5 transition-colors">
+                      <button onClick={e => { e.stopPropagation(); setDetail(p); }} className="p-1.5 text-white/40 hover:text-blue-400 rounded hover:bg-blue-400/5 transition-colors" title="Xem chi tiết">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      </button>
+                      <button onClick={e => { e.stopPropagation(); openEditPhong(p); }} className="p-1.5 text-white/40 hover:text-white rounded hover:bg-white/5 transition-colors" title="Chỉnh sửa">
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
@@ -248,11 +261,35 @@ export default function AdminRap() {
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-md">
             <div className="flex items-center justify-between p-6 border-b border-white/5">
-              <h2 className="text-base font-bold text-white">{rapModal.mode === 'create' ? 'Thêm rạp mới' : 'Chỉnh sửa rạp'}</h2>
+              <h2 className="text-base font-bold text-white">
+                {rapModal.mode === 'view' ? 'Chi tiết rạp' : rapModal.mode === 'create' ? 'Thêm rạp mới' : 'Chỉnh sửa rạp'}
+              </h2>
               <button onClick={() => setRapModal(null)} className="text-white/40 hover:text-white transition-colors">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
+            
+            {rapModal.mode === 'view' ? (
+              <div className="p-6 space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-primary text-2xl font-bold shrink-0">
+                    {rapModal.data.tenRap?.[0]?.toUpperCase() || '?'}
+                  </div>
+                  <div>
+                    <p className="text-base font-bold text-white">{rapModal.data.tenRap}</p>
+                    <span className="inline-block mt-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-white/5 text-white/50">Rạp chiếu phim</span>
+                  </div>
+                </div>
+                <div className="space-y-3 pt-2">
+                  <Row label="ID" value={`#${rapModal.data.id}`} />
+                  <Row label="Địa chỉ" value={rapModal.data.diaChi || '—'} />
+                  <Row label="Hotline" value={rapModal.data.hotline || '—'} />
+                </div>
+                <div className="flex justify-end gap-3 pt-2">
+                  <button onClick={() => setRapModal(null)} className="btn-outline text-sm px-5 py-2">Đóng</button>
+                </div>
+              </div>
+            ) : (
             <form onSubmit={handleSaveRap} className="p-6 space-y-4">
               {error && <p className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-4 py-2">{error}</p>}
               <div>
@@ -274,6 +311,7 @@ export default function AdminRap() {
                 </button>
               </div>
             </form>
+            )}
           </div>
         </div>
       )}
@@ -337,32 +375,25 @@ export default function AdminRap() {
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
-            <div className="p-6 space-y-5">
-              <div>
-                <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Tên phòng chiếu</label>
-                <p className="text-lg font-bold text-primary mt-1">{detail.tenPhong}</p>
-              </div>
-              {selectedRap && (
-                <div>
-                  <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Rạp</label>
-                  <p className="text-sm text-white mt-1">{selectedRap.tenRap}</p>
-                </div>
-              )}
-              <div className="grid grid-cols-2 gap-4 bg-white/5 rounded-lg p-4">
-                <div>
-                  <p className="text-xs font-semibold text-white/50 mb-1">SỐ HÀNG GHẾ</p>
-                  <p className="text-lg font-bold text-white">{detail.soHangGhe}</p>
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-primary text-2xl font-bold shrink-0">
+                  {detail.tenPhong?.[0]?.toUpperCase() || '?'}
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-white/50 mb-1">SỐ GHẾ 1 HÀNG</p>
-                  <p className="text-lg font-bold text-white">{detail.soGheMotHang}</p>
+                  <p className="text-base font-bold text-white">{detail.tenPhong}</p>
+                  <span className="inline-block mt-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-white/5 text-white/50">{selectedRap?.tenRap || 'Phòng chiếu'}</span>
                 </div>
               </div>
-              <div className="text-sm text-white/60 text-center">
-                <p>Tổng số ghế: <span className="text-primary font-semibold">{detail.soHangGhe * detail.soGheMotHang}</span></p>
+              <div className="space-y-3 pt-2">
+                <Row label="ID" value={`#${detail.id}`} />
+                <Row label="Rạp" value={selectedRap?.tenRap || '—'} />
+                <Row label="Số hàng ghế" value={detail.soHangGhe} />
+                <Row label="Ghế mỗi hàng" value={detail.soGheMotHang} />
+                <Row label="Tổng số ghế" value={detail.soHangGhe * detail.soGheMotHang} />
               </div>
-              <div className="flex justify-end">
-                <button onClick={() => setDetail(null)} className="btn-outline text-sm py-2">Đóng</button>
+              <div className="flex justify-end gap-3 pt-2">
+                <button onClick={() => setDetail(null)} className="btn-outline text-sm px-5 py-2">Đóng</button>
               </div>
             </div>
           </div>
@@ -407,3 +438,13 @@ function ConfirmDelete({ onConfirm, onCancel, label, error }) {
   )
 }
 
+
+
+function Row({ label, value }) {
+  return (
+    <div className="flex items-center justify-between py-2 border-b border-white/5">
+      <span className="text-xs text-white/40">{label}</span>
+      <span className="text-sm text-white">{value}</span>
+    </div>
+  )
+}

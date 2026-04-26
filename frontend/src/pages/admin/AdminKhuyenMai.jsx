@@ -163,12 +163,18 @@ export default function AdminKhuyenMai() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right space-x-2">
-                    <button onClick={() => openEdit(k)} className="text-white/40 hover:text-primary transition-colors p-1.5 rounded hover:bg-primary/5">
+                    <button onClick={() => setDetail(k)} className="text-white/40 hover:text-blue-400 transition-colors p-1.5 rounded hover:bg-blue-400/5" title="Xem chi tiết">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </button>
+                    <button onClick={() => openEdit(k)} className="text-white/40 hover:text-primary transition-colors p-1.5 rounded hover:bg-primary/5" title="Chỉnh sửa">
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                       </svg>
                     </button>
-                    <button onClick={() => setDeleteId(k.id)} className="text-white/40 hover:text-red-400 transition-colors p-1.5 rounded hover:bg-red-400/5">
+                    <button onClick={() => setDeleteId(k.id)} className="text-white/40 hover:text-red-400 transition-colors p-1.5 rounded hover:bg-red-400/5" title="Xóa">
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
@@ -266,54 +272,31 @@ export default function AdminKhuyenMai() {
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
-            <div className="p-6 space-y-5">
-              <div>
-                <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Mã khuyến mại</label>
-                <p className="text-lg font-bold text-primary mt-1">{detail.maKhuyenMai}</p>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Giá trị giảm</label>
-                  <p className="text-lg font-bold text-white mt-1">{fmtMoney(detail.giaTriGiam)}</p>
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-primary text-2xl font-bold shrink-0">
+                  %
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Trạng thái</label>
-                  <p className="mt-1">
-                    <span className={`inline-block px-2 py-1 text-xs rounded ${detail.conHieuLuc ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                      {detail.conHieuLuc ? 'Có hiệu lực' : 'Hết hiệu lực'}
-                    </span>
-                  </p>
+                  <p className="text-base font-bold text-white">{detail.maKhuyenMai}</p>
+                  <span className={`inline-block mt-1 text-xs font-semibold px-2 py-0.5 rounded-full ${detail.conHieuLuc ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'}`}>
+                    {detail.conHieuLuc ? 'Có hiệu lực' : 'Hết hiệu lực'}
+                  </span>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Lượt đã dùng</label>
-                  <p className="text-white mt-1 font-semibold">{detail.soLuotDaDung ?? 0}</p>
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Giới hạn lượt</label>
-                  <p className="text-white mt-1 font-semibold">{detail.soLuotSuDung > 0 ? detail.soLuotSuDung : 'Không giới hạn'}</p>
-                </div>
+              <div className="space-y-3 pt-2">
+                <Row label="ID" value={`#${detail.id}`} />
+                <Row label="Giá trị giảm" value={fmtMoney(detail.giaTriGiam)} />
+                <Row label="Giảm tối đa" value={detail.giamToiDa > 0 ? new Intl.NumberFormat('vi-VN').format(detail.giamToiDa) + 'đ' : 'Không giới hạn'} />
+                <Row label="Từ ngày" value={fmtDate(detail.ngayBatDau)} />
+                <Row label="Đến ngày" value={fmtDate(detail.ngayKetThuc)} />
+                <Row label="Lượt đã dùng" value={detail.soLuotDaDung ?? 0} />
+                <Row label="Giới hạn lượt" value={detail.soLuotSuDung > 0 ? detail.soLuotSuDung : 'Không giới hạn'} />
+                <Row label="Ngày tạo" value={detail.ngayTao ? new Date(detail.ngayTao).toLocaleDateString('vi-VN') : '—'} />
+                <Row label="Cập nhật" value={detail.ngayCapNhat ? new Date(detail.ngayCapNhat).toLocaleDateString('vi-VN') : '—'} />
               </div>
-              <div>
-                <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Giảm tối đa</label>
-                <p className="text-white mt-1 font-semibold">
-                  {detail.giamToiDa > 0 ? new Intl.NumberFormat('vi-VN').format(detail.giamToiDa) + 'đ' : 'Không giới hạn'}
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Từ ngày</label>
-                  <p className="text-white mt-1">{fmtDate(detail.ngayBatDau)}</p>
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Đến ngày</label>
-                  <p className="text-white mt-1">{fmtDate(detail.ngayKetThuc)}</p>
-                </div>
-              </div>
-              <div className="flex gap-3 pt-4">
-                <button onClick={() => { setDetail(null); openEdit(detail) }} className="flex-1 btn-primary text-sm py-2">Chỉnh sửa</button>
-                <button onClick={() => setDetail(null)} className="flex-1 btn-outline text-sm py-2.5">Đóng</button>
+              <div className="flex justify-end gap-3 pt-2">
+                <button onClick={() => setDetail(null)} className="btn-outline text-sm px-5 py-2">Đóng</button>
               </div>
             </div>
           </div>
@@ -323,3 +306,11 @@ export default function AdminKhuyenMai() {
   )
 }
 
+function Row({ label, value }) {
+  return (
+    <div className="flex items-center justify-between py-2 border-b border-white/5">
+      <span className="text-xs text-white/40">{label}</span>
+      <span className="text-sm text-white">{value}</span>
+    </div>
+  )
+}
