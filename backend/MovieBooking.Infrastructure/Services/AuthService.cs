@@ -51,7 +51,7 @@ namespace MovieBooking.Infrastructure.Services
 
             var nguoiDung = _mapper.Map<NguoiDung>(registerDto);
             nguoiDung.MatKhauHash = _passwordHasher.HashPassword(registerDto.MatKhau);
-            nguoiDung.VaiTro = UserRole.Customer.ToString();
+            nguoiDung.VaiTro = UserRole.KhachHang.ToString();
             nguoiDung.TenDangNhap = registerDto.HoTen;
             nguoiDung.SoDienThoai = registerDto.SoDienThoai;
 

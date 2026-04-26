@@ -5,7 +5,7 @@ namespace MovieBooking.Domain.Entities
     public class DonDatVe : BaseEntity
     {
         public decimal TongTien { get; set; }
-        public string TrangThai { get; set; } = string.Empty; // ChoThanhToan, DaThanhToan, Huy
+        public string TrangThai { get; set; } = string.Empty; // Pending, Paid, Cancelled, Refunded
 
         public int NguoiDungId { get; set; }
         public NguoiDung NguoiDung { get; set; } = null!;

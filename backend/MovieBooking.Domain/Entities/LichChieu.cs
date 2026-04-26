@@ -1,9 +1,4 @@
 ﻿using MovieBooking.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MovieBooking.Domain.Entities
 {
@@ -14,11 +9,11 @@ namespace MovieBooking.Domain.Entities
         public decimal GiaCoBan { get; set; }
 
         public int PhimId { get; set; }
-        public Phim Phim { get; set; }
+        public Phim Phim { get; set; } = null!;
 
         public int PhongChieuId { get; set; }
-        public PhongChieu PhongChieu { get; set; }
+        public PhongChieu PhongChieu { get; set; } = null!;
 
-        public ICollection<DonDatVe> DonDatVes { get; set; }
+        public ICollection<DonDatVe> DonDatVes { get; set; } = new List<DonDatVe>();
     }
 }
