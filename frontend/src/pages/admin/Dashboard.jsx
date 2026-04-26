@@ -238,8 +238,7 @@ export default function Dashboard() {
   }))
   const topPhim = s.topPhim || []
 
-  const maxDT = Math.max(...doanhThu7Ngay.map(d => d.doanhThu), 1)
-  const maxSoDon = Math.max(...doanhThu7Ngay.map(d => d.soDon), 1)
+
 
   return (
     <div className="space-y-6">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import bookingService from '../services/bookingService'
 
@@ -19,7 +19,6 @@ const STATUS_MAP = {
 
 export default function MyTickets() {
   const { user } = useAuth()
-  const navigate = useNavigate()
   const [tickets, setTickets]   = useState([])
   const [loading, setLoading]   = useState(true)
   const [filter, setFilter]     = useState('all')

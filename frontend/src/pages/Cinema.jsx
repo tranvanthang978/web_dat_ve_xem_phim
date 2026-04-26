@@ -1,8 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { mockMovies } from '../data/mockMovies'
-import MovieCard from '../components/MovieCard'
-import Loading from '../components/Loading'
 
 const cinemas = [
   { id: 1, name: 'TTA Cinema Hà Nội', city: 'Hà Nội', address: '100 Trần Hưng Đạo, Hoàn Kiếm', rooms: 12, image: 'https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=800' },
@@ -33,8 +30,6 @@ const rooms = {
 export default function Cinema() {
   const [selectedCity, setSelectedCity] = useState('Tất cả')
   const [selectedCinema, setSelectedCinema] = useState(null)
-  const [loading, setLoading] = useState(false)
-
   const cities = ['Tất cả', ...new Set(cinemas.map(c => c.city))]
 
   const filtered = selectedCity === 'Tất cả'

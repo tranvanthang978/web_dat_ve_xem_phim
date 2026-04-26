@@ -67,7 +67,7 @@ export default function AdminNguoiDung() {
     try {
       await adminService.deleteNguoiDung(deleteId)
       setUsers(prev => prev.filter(u => u.id !== deleteId))
-    } catch {}
+    } catch (e) { console.error(e) }
     setDeleteId(null); setDeleteUser(null)
   }
 
@@ -79,7 +79,6 @@ export default function AdminNguoiDung() {
     const matchRole = roleFilter === 'all' || u.vaiTro === roleFilter
     return matchSearch && matchRole
   })
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
   const pageItems = filtered.slice((page - 1) * pageSize, page * pageSize)
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import phimService from '../services/phimService'
@@ -201,9 +201,7 @@ export default function BookingPage() {
         const prevSelected = newSelected.find(s => s.id === prev.id)
         const currSelected = newSelected.find(s => s.id === curr.id)
         const nextSelected = newSelected.find(s => s.id === next.id)
-        const prevTaken = prev.daDat
         const currTaken = curr.daDat
-        const nextTaken = next.daDat
 
         // Chỉ báo lỗi khi curr trống (chưa bán, chưa chọn) kẹp giữa 2 ghế đang được CHỌN bởi user
         // Ghế đã bán không tính — user không thể chọn nó nên không phải lỗi của họ

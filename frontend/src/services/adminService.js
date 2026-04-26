@@ -10,13 +10,11 @@ const adminService = {
   }),
   deleteNguoiDung: (id) => api.delete(`/nguoidung/${id}`),
 
-  // Phim
   getAllPhim: () => api.get('/phim'),
   createPhim: (data) => api.post('/phim', data),
   updatePhim: (id, data) => api.put(`/phim/${id}`, data),
   deletePhim: (id) => api.delete(`/phim/${id}`),
 
-  // Rạp
   getAllRap: () => api.get('/rap'),
   createRap: (data) => api.post('/rap', data),
   updateRap: (id, data) => api.put(`/rap/${id}`, data),
@@ -27,13 +25,11 @@ const adminService = {
   updatePhongChieu: (id, data) => api.put(`/rap/phong-chieu/${id}`, data),
   deletePhongChieu: (id) => api.delete(`/rap/phong-chieu/${id}`),
 
-  // Lịch chiếu
   getLichChieuByPhim: (phimId) => api.get(`/lichchieu/phim/${phimId}`),
   createLichChieu: (data) => api.post('/lichchieu', data),
   updateLichChieu: (id, data) => api.put(`/lichchieu/${id}`, data),
   deleteLichChieu: (id) => api.delete(`/lichchieu/${id}`),
 
-  // Khuyến mại
   getAllKhuyenMai: () => api.get('/khuyenmai'),
   createKhuyenMai: (data) => api.post('/khuyenmai', data),
   updateKhuyenMai: (id, data) => api.put(`/khuyenmai/${id}`, data),

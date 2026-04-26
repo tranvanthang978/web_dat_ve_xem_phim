@@ -101,7 +101,6 @@ export default function MovieDetail() {
     return d.toLocaleDateString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit' }) === activeDateStr
   })
 
-  const todayShowtimes = displayShowtimes // giữ tương thích với JSX bên dưới
 
   // Group theo tên rạp — LichChieuDto có tenRap, tenPhong trực tiếp
   const groupedShowtimes = displayShowtimes.reduce((acc, show) => {

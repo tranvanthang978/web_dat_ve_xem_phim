@@ -79,7 +79,7 @@ export default function AdminKhuyenMai() {
     try {
       await adminService.deleteKhuyenMai(deleteId)
       load()
-    } catch {}
+    } catch (e) { console.error(e) }
     setDeleteId(null)
   }
 
@@ -134,7 +134,8 @@ export default function AdminKhuyenMai() {
                 <th className="text-left px-4 py-3 text-xs font-semibold text-white/40 uppercase tracking-wider hidden lg:table-cell">Từ ngày</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-white/40 uppercase tracking-wider hidden lg:table-cell">Đến ngày</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-white/40 uppercase tracking-wider hidden lg:table-cell">Lượt dùng</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-white/40 uppercase tracking-wider">Trạng thái</th>                <th className="text-right px-4 py-3 text-xs font-semibold text-white/40 uppercase tracking-wider">Thao tác</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-white/40 uppercase tracking-wider">Trạng thái</th>
+                <th className="text-right px-4 py-3 text-xs font-semibold text-white/40 uppercase tracking-wider">Thao tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -299,7 +300,8 @@ export default function AdminKhuyenMai() {
                 <p className="text-white mt-1 font-semibold">
                   {detail.giamToiDa > 0 ? new Intl.NumberFormat('vi-VN').format(detail.giamToiDa) + 'đ' : 'Không giới hạn'}
                 </p>
-              </div>              <div className="grid grid-cols-2 gap-4">
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Từ ngày</label>
                   <p className="text-white mt-1">{fmtDate(detail.ngayBatDau)}</p>
