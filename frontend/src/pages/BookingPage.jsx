@@ -323,10 +323,12 @@ export default function BookingPage() {
 
   if (done) {
     const maDon = bookedId ? `TTA${String(bookedId).padStart(6, '0')}` : 'TTA000000'
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(maDon)}`
     const { date, time: timeStr } = lichChieu ? fmtDateTime(lichChieu.gioBatDau) : { date: '', time: '' }
+    const seatsStr = selectedSeats.map(s => s.soGhe || s.tenGhe).join(', ')
+    const qrData = `Mã đơn: ${maDon}\nPhim: ${phim?.tenPhim}\nRạp: ${lichChieu?.tenRap}\nPhòng: ${lichChieu?.tenPhong}\nSuất chiếu: ${timeStr} - ${date}\nGhế: ${seatsStr}`
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`
     return (
-      <div className="min-h-screen bg-[#0A0C10] flex items-center justify-center px-4 py-12">
+      <div className="min-h-[calc(100vh-80px)] bg-[#0A0C10] flex flex-col items-center justify-start pt-16 px-4 pb-12">
         <div className="w-full max-w-lg">
           {/* Header */}
           <div className="text-center mb-6">

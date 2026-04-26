@@ -120,7 +120,11 @@ export default function MyTickets() {
               const status = STATUS_MAP[ticket.trangThai] || STATUS_MAP.Pending
               const isExpanded = expanded === ticket.id
               const maDon = `TTA${String(ticket.id).padStart(6, '0')}`
-              const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(maDon)}`
+              const timeStr = fmtTime(ticket.gioBatDau)
+              const dateStr = fmtDate(ticket.gioBatDau)
+              const seatsStr = (ticket.danhSachGhe || []).join(', ')
+              const qrData = `Mã đơn: ${maDon}\nPhim: ${ticket.tenPhim}\nRạp: ${ticket.tenRap}\nPhòng: ${ticket.tenPhong}\nSuất chiếu: ${timeStr} - ${dateStr}\nGhế: ${seatsStr}`
+              const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`
               const isPaid = ticket.trangThai === 'Paid'
               const isPending = ticket.trangThai === 'Pending'
               const isCancelled = ticket.trangThai === 'Cancelled'

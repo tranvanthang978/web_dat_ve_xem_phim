@@ -52,12 +52,15 @@ namespace MovieBooking.Api.Controllers
 
             if (success && donDatVeId.HasValue)
             {
-                // Gửi email xác nhận + QR (fire-and-forget, không block redirect)
-                _ = Task.Run(async () =>
+                // Gửi email xác nhận + QR
+                try
                 {
-                    try { await _emailService.SendBookingConfirmationAsync(donDatVeId.Value); }
-                    catch { /* log nếu cần, không throw */ }
-                });
+                    await _emailService.SendBookingConfirmationAsync(donDatVeId.Value);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[WARN] Gửi email xác nhận thất bại: {ex.Message}");
+                }
             }
 
             string frontendBase = _config["Frontend:BaseUrl"] ?? "http://localhost:1607";
@@ -120,11 +123,14 @@ namespace MovieBooking.Api.Controllers
             });
             await _dbContext.SaveChangesAsync();
 
-            _ = Task.Run(async () =>
+            try
             {
-                try { await _emailService.SendBookingConfirmationAsync(request.DonDatVeId); }
-                catch (Exception ex) { Console.WriteLine($"[WARN] Gửi email xác nhận thất bại: {ex.Message}"); }
-            });
+                await _emailService.SendBookingConfirmationAsync(request.DonDatVeId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[WARN] Gửi email xác nhận thất bại: {ex.Message}");
+            }
 
             return Ok(new { message = "Xác nhận thanh toán thành công" });
         }

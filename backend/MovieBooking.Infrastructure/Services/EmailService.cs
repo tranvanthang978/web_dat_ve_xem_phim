@@ -46,108 +46,117 @@ namespace MovieBooking.Infrastructure.Services
             string tongTien  = don.TongTien.ToString("N0") + "đ";
             string maDon     = $"TTA{don.Id:D6}";
 
-            // QR data: mã đơn để quầy scan
-            string qrData    = maDon;
-            string qrUrl     = $"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={Uri.EscapeDataString(qrData)}";
+            // QR data: chi tiết đơn để quầy scan
+            string qrData    = $"Mã đơn: {maDon}\nPhim: {tenPhim}\nRạp: {tenRap}\nPhòng: {tenPhong}\nSuất chiếu: {gioChieu}\nGhế: {danhSachGhe}";
+            string qrUrl     = $"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={Uri.EscapeDataString(qrData)}";
 
             string html = $@"
 <!DOCTYPE html>
 <html>
 <head><meta charset='utf-8'></head>
-<body style='margin:0;padding:0;background:#0a0c10;font-family:Arial,sans-serif;'>
-  <table width='100%' cellpadding='0' cellspacing='0' style='background:#0a0c10;padding:40px 0;'>
+<body style='margin:0;padding:0;background:#f3f4f6;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;'>
+  <table width='100%' cellpadding='0' cellspacing='0' style='background:#f3f4f6;padding:40px 0;'>
     <tr><td align='center'>
-      <table width='560' cellpadding='0' cellspacing='0' style='background:#15171e;border-radius:16px;overflow:hidden;'>
-
+      <table width='580' cellpadding='0' cellspacing='0' style='background:#ffffff;border-radius:16px;overflow:hidden;box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 10px 15px rgba(0,0,0,0.1);'>
+        
         <!-- Header -->
         <tr>
-          <td style='background:#e50914;padding:28px 32px;text-align:center;'>
-            <h1 style='margin:0;color:#fff;font-size:26px;font-weight:900;letter-spacing:1px;'>
-              <span>TTA</span><span style='color:#ffcdd2;'>Movie</span>
+          <td style='background:#e50914;padding:32px;text-align:center;'>
+            <h1 style='margin:0;color:#ffffff;font-size:28px;font-weight:900;letter-spacing:1px;'>
+              TTA MOVIE
             </h1>
-            <p style='margin:6px 0 0;color:rgba(255,255,255,0.85);font-size:13px;'>Xác nhận đặt vé thành công</p>
+            <p style='margin:8px 0 0;color:rgba(255,255,255,0.9);font-size:14px;text-transform:uppercase;letter-spacing:1px;'>
+              Xác nhận đặt vé thành công
+            </p>
           </td>
         </tr>
 
         <!-- Body -->
         <tr>
           <td style='padding:32px;'>
-            <p style='color:#9ca3af;font-size:14px;margin:0 0 24px;'>
-              Xin chào <strong style='color:#fff;'>{don.NguoiDung.HoTen}</strong>,<br>
-              Đơn đặt vé của bạn đã được xác nhận. Vui lòng xuất trình mã QR bên dưới tại quầy để nhận vé.
+            <p style='color:#1f2937;font-size:16px;font-weight:600;margin:0 0 12px;'>Xin chào {don.NguoiDung.HoTen},</p>
+            <p style='color:#4b5563;font-size:15px;line-height:1.6;margin:0 0 24px;'>
+              Chúc mừng bạn đã đặt vé thành công! Dưới đây là thông tin chi tiết cho trải nghiệm điện ảnh sắp tới của bạn.
             </p>
 
-            <!-- Movie info -->
-            <table width='100%' cellpadding='0' cellspacing='0'
-              style='background:#1f2128;border-radius:12px;padding:20px;margin-bottom:24px;'>
+            <!-- Ticket Details Card -->
+            <table width='100%' cellpadding='0' cellspacing='0' style='background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:24px;'>
               <tr>
-                <td style='padding:6px 0;'>
-                  <span style='color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:1px;'>Phim</span><br>
-                  <strong style='color:#fff;font-size:16px;'>{tenPhim}</strong>
+                <td style='padding-bottom:16px;border-bottom:1px solid #e5e7eb;'>
+                  <span style='color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:600;'>Phim</span><br>
+                  <strong style='color:#111827;font-size:18px;display:block;margin-top:4px;'>{tenPhim}</strong>
                 </td>
               </tr>
-              <tr><td style='border-top:1px solid #2d2f36;padding:12px 0 6px;'>
-                <table width='100%'><tr>
-                  <td width='50%'>
-                    <span style='color:#6b7280;font-size:11px;text-transform:uppercase;'>Rạp</span><br>
-                    <span style='color:#e5e7eb;font-size:13px;'>{tenRap}</span>
-                  </td>
-                  <td width='50%'>
-                    <span style='color:#6b7280;font-size:11px;text-transform:uppercase;'>Phòng</span><br>
-                    <span style='color:#e5e7eb;font-size:13px;'>{tenPhong}</span>
-                  </td>
-                </tr></table>
-              </td></tr>
-              <tr><td style='border-top:1px solid #2d2f36;padding:12px 0 6px;'>
-                <table width='100%'><tr>
-                  <td width='50%'>
-                    <span style='color:#6b7280;font-size:11px;text-transform:uppercase;'>Suất chiếu</span><br>
-                    <span style='color:#e5e7eb;font-size:13px;'>{gioChieu}</span>
-                  </td>
-                  <td width='50%'>
-                    <span style='color:#6b7280;font-size:11px;text-transform:uppercase;'>Ghế</span><br>
-                    <span style='color:#e5e7eb;font-size:13px;'>{danhSachGhe}</span>
-                  </td>
-                </tr></table>
-              </td></tr>
-              <tr><td style='border-top:1px solid #2d2f36;padding:12px 0 0;'>
-                <table width='100%'><tr>
-                  <td width='50%'>
-                    <span style='color:#6b7280;font-size:11px;text-transform:uppercase;'>Mã đơn</span><br>
-                    <span style='color:#e50914;font-size:14px;font-weight:700;'>{maDon}</span>
-                  </td>
-                  <td width='50%'>
-                    <span style='color:#6b7280;font-size:11px;text-transform:uppercase;'>Tổng tiền</span><br>
-                    <span style='color:#fff;font-size:14px;font-weight:700;'>{tongTien}</span>
-                  </td>
-                </tr></table>
-              </td></tr>
+              <tr>
+                <td style='padding:16px 0;border-bottom:1px solid #e5e7eb;'>
+                  <table width='100%'>
+                    <tr>
+                      <td width='50%'>
+                        <span style='color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:1px;'>Rạp</span><br>
+                        <span style='color:#374151;font-size:14px;font-weight:500;display:block;margin-top:4px;'>{tenRap}</span>
+                      </td>
+                      <td width='50%'>
+                        <span style='color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:1px;'>Phòng</span><br>
+                        <span style='color:#374151;font-size:14px;font-weight:500;display:block;margin-top:4px;'>{tenPhong}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style='padding:16px 0;border-bottom:1px solid #e5e7eb;'>
+                  <table width='100%'>
+                    <tr>
+                      <td width='50%'>
+                        <span style='color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:1px;'>Suất chiếu</span><br>
+                        <span style='color:#374151;font-size:14px;font-weight:500;display:block;margin-top:4px;'>{gioChieu}</span>
+                      </td>
+                      <td width='50%'>
+                        <span style='color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:1px;'>Ghế</span><br>
+                        <span style='color:#e50914;font-size:14px;font-weight:600;display:block;margin-top:4px;'>{danhSachGhe}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style='padding-top:16px;'>
+                  <table width='100%'>
+                    <tr>
+                      <td width='50%'>
+                        <span style='color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:1px;'>Mã đơn hàng</span><br>
+                        <span style='color:#111827;font-size:15px;font-weight:700;display:block;margin-top:4px;'>{maDon}</span>
+                      </td>
+                      <td width='50%'>
+                        <span style='color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:1px;'>Tổng tiền</span><br>
+                        <span style='color:#111827;font-size:16px;font-weight:800;display:block;margin-top:4px;'>{tongTien}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
             </table>
 
-            <!-- QR Code -->
-            <table width='100%' cellpadding='0' cellspacing='0'
-              style='background:#1f2128;border-radius:12px;padding:24px;text-align:center;margin-bottom:24px;'>
-              <tr><td>
-                <p style='color:#9ca3af;font-size:12px;margin:0 0 16px;text-transform:uppercase;letter-spacing:1px;'>
-                  Mã QR — Xuất trình tại quầy
-                </p>
-                <img src='{qrUrl}' width='180' height='180'
-                  style='border-radius:8px;background:#fff;padding:8px;display:block;margin:0 auto;'
-                  alt='QR Code {maDon}' />
-                <p style='color:#6b7280;font-size:11px;margin:12px 0 0;'>{maDon}</p>
-              </td></tr>
-            </table>
+            <!-- QR Section -->
+            <div style='background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:24px; text-align:center;'>
+              <p style='color:#6b7280;font-size:12px;margin:0 0 16px;text-transform:uppercase;letter-spacing:1px;font-weight:600;'>
+                Quét mã này tại quầy để nhận vé
+              </p>
+              <div style='background:#ffffff; padding:12px; border:1px solid #e5e7eb; border-radius:12px; display:inline-block;'>
+                <img src='{qrUrl}' width='180' height='180' style='display:block;' alt='QR Code Ticket' />
+              </div>
+            </div>
 
-            <p style='color:#4b5563;font-size:12px;text-align:center;margin:0;'>
-              Email này được gửi tự động từ hệ thống TTA Movie. Vui lòng không trả lời email này.
+            <p style='color:#9ca3af;font-size:12px;text-align:center;margin:32px 0 0;'>
+              Email này được gửi tự động từ hệ thống TTA Movie.<br>Vui lòng không trả lời email này.
             </p>
           </td>
         </tr>
 
         <!-- Footer -->
         <tr>
-          <td style='background:#0d0f14;padding:16px 32px;text-align:center;'>
-            <p style='color:#374151;font-size:11px;margin:0;'>© 2026 TTA Movie. All rights reserved.</p>
+          <td style='background:#f9fafb;padding:20px 32px;text-align:center;border-top:1px solid #e5e7eb;'>
+            <p style='color:#9ca3af;font-size:12px;margin:0;'>© 2026 TTA Movie Cinema Group. All rights reserved.</p>
           </td>
         </tr>
 
@@ -163,11 +172,23 @@ namespace MovieBooking.Infrastructure.Services
             message.Subject = $"[TTA Movie] Xác nhận đặt vé — {tenPhim}";
             message.Body = new TextPart("html") { Text = html };
 
-            using var client = new SmtpClient();
-            await client.ConnectAsync(smtpHost, smtpPort, SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync(senderEmail, password);
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
+            Console.WriteLine($"[EMAIL] Đang gửi email xác nhận vé tới {don.NguoiDung.Email}...");
+            try
+            {
+                using var client = new SmtpClient();
+                await client.ConnectAsync(smtpHost, smtpPort, SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(senderEmail, password);
+                await client.SendAsync(message);
+                await client.DisconnectAsync(true);
+                Console.WriteLine($"[EMAIL] Gửi email xác nhận vé thành công tới {don.NguoiDung.Email}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[EMAIL ERROR] Gửi email xác nhận vé thất bại: {ex.Message}");
+                Console.WriteLine($"[EMAIL ERROR] InnerException: {ex.InnerException?.Message}");
+                Console.WriteLine($"[EMAIL ERROR] StackTrace: {ex.StackTrace}");
+                throw; // Re-throw để caller biết
+            }
         }
 
         public async Task SendPasswordResetOtpAsync(string toEmail, string hoTen, string otp)
@@ -185,36 +206,54 @@ namespace MovieBooking.Infrastructure.Services
 <!DOCTYPE html>
 <html>
 <head><meta charset='utf-8'></head>
-<body style='margin:0;padding:0;background:#0a0c10;font-family:Arial,sans-serif;'>
-  <table width='100%' cellpadding='0' cellspacing='0' style='background:#0a0c10;padding:40px 0;'>
+<body style='margin:0;padding:0;background:#f3f4f6;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;'>
+  <table width='100%' cellpadding='0' cellspacing='0' style='background:#f3f4f6;padding:40px 0;'>
     <tr><td align='center'>
-      <table width='560' cellpadding='0' cellspacing='0' style='background:#15171e;border-radius:16px;overflow:hidden;'>
+      <table width='540' cellpadding='0' cellspacing='0' style='background:#ffffff;border-radius:16px;overflow:hidden;box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 10px 15px rgba(0,0,0,0.1);'>
+        
+        <!-- Header -->
         <tr>
-          <td style='background:#e50914;padding:28px 32px;text-align:center;'>
-            <h1 style='margin:0;color:#fff;font-size:26px;font-weight:900;'>TTA Movie</h1>
-            <p style='margin:6px 0 0;color:rgba(255,255,255,0.85);font-size:13px;'>Yêu cầu đặt lại mật khẩu</p>
+          <td style='background:#e50914;padding:32px;text-align:center;'>
+            <h1 style='margin:0;color:#ffffff;font-size:28px;font-weight:900;letter-spacing:1px;'>TTA MOVIE</h1>
+            <p style='margin:8px 0 0;color:rgba(255,255,255,0.9);font-size:14px;text-transform:uppercase;'>Yêu cầu đặt lại mật khẩu</p>
           </td>
         </tr>
+
+        <!-- Body -->
         <tr>
-          <td style='padding:32px;'>
-            <p style='color:#9ca3af;font-size:14px;margin:0 0 24px;'>Xin chào <strong style='color:#fff;'>{hoTen}</strong>,</p>
-            <p style='color:#fff;font-size:22px;font-weight:800;letter-spacing:0.12em;text-align:center;margin:0 0 20px;'>{otp}</p>
-            <p style='color:#9ca3af;font-size:13px;line-height:1.7;'>Mã OTP này có hiệu lực trong 5 phút. Vui lòng không chia sẻ mã với bất kỳ ai.</p>
-            <div style='margin-top:28px;padding:20px;border-radius:16px;background:#111827;'>
-              <p style='color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;'>Hướng dẫn</p>
-              <ul style='color:#d1d5db;font-size:13px;line-height:1.8;margin:0;padding-left:18px;'>
-                <li>Nhập mã OTP trên trang quên mật khẩu.</li>
-                <li>Thiết lập mật khẩu mới an toàn.</li>
-                <li>Nếu bạn không yêu cầu thay đổi mật khẩu, hãy bỏ qua email này.</li>
+          <td style='padding:40px 32px;'>
+            <p style='color:#1f2937;font-size:16px;font-weight:600;margin:0 0 16px;'>Xin chào {hoTen},</p>
+            <p style='color:#4b5563;font-size:15px;line-height:1.6;margin:0 0 32px;'>
+              Bạn đã gửi yêu cầu đặt lại mật khẩu cho tài khoản tại TTA Movie. Vui lòng sử dụng mã xác nhận bên dưới:
+            </p>
+
+            <div style='background:#f9fafb; border-radius:12px; padding:32px; text-align:center; margin-bottom:32px; border:1px dashed #d1d5db;'>
+              <p style='color:#6b7280;font-size:12px;margin:0 0 16px;text-transform:uppercase;letter-spacing:1px;font-weight:600;'>Mã OTP của bạn</p>
+              <p style='color:#e50914;font-size:42px;font-weight:900;letter-spacing:8px;margin:0;'>{otp}</p>
+            </div>
+
+            <p style='color:#4b5563;font-size:14px;line-height:1.6;margin:0 0 32px;'>
+              Lưu ý: Mã này chỉ có hiệu lực trong <strong>5 phút</strong>. Tuyệt đối không chia sẻ mã này với bất kỳ ai để bảo mật tài khoản.
+            </p>
+
+            <div style='background:#f3f4f6; border-radius:12px; padding:20px; border-left:4px solid #e50914;'>
+              <p style='color:#1f2937;font-size:13px;font-weight:700;margin:0 0 8px;text-transform:uppercase;'>Hướng dẫn</p>
+              <ul style='color:#4b5563;font-size:13px;line-height:1.6;margin:0;padding-left:18px;'>
+                <li>Nhập mã OTP trên trang xác thực của ứng dụng.</li>
+                <li>Thiết lập mật khẩu mới (nên bao gồm cả chữ và số).</li>
+                <li>Nếu không phải bạn yêu cầu, hãy đổi mật khẩu tài khoản ngay lập tức.</li>
               </ul>
             </div>
           </td>
         </tr>
+
+        <!-- Footer -->
         <tr>
-          <td style='background:#0d0f14;padding:16px 32px;text-align:center;'>
-            <p style='color:#374151;font-size:11px;margin:0;'>© 2026 TTA Movie. Email này được gửi tự động.</p>
+          <td style='background:#f9fafb;padding:20px 32px;text-align:center;border-top:1px solid #e5e7eb;'>
+            <p style='color:#9ca3af;font-size:12px;margin:0;'>© 2026 TTA Movie Cinema Group. Email tự động.</p>
           </td>
         </tr>
+
       </table>
     </td></tr>
   </table>
@@ -239,11 +278,23 @@ namespace MovieBooking.Infrastructure.Services
             message.Subject = "[TTA Movie] OTP đặt lại mật khẩu";
             message.Body = new TextPart("html") { Text = html };
 
-            using var client = new SmtpClient();
-            await client.ConnectAsync(smtpHost, smtpPort, SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync(senderEmail, password);
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
+            Console.WriteLine($"[EMAIL] Đang gửi OTP tới {toEmail}... (SMTP: {smtpHost}:{smtpPort}, From: {senderEmail})");
+            try
+            {
+                using var client = new SmtpClient();
+                await client.ConnectAsync(smtpHost, smtpPort, SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(senderEmail, password);
+                await client.SendAsync(message);
+                await client.DisconnectAsync(true);
+                Console.WriteLine($"[EMAIL] Gửi OTP thành công tới {toEmail}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[EMAIL ERROR] Gửi OTP thất bại: {ex.Message}");
+                Console.WriteLine($"[EMAIL ERROR] InnerException: {ex.InnerException?.Message}");
+                Console.WriteLine($"[EMAIL ERROR] StackTrace: {ex.StackTrace}");
+                throw; // Re-throw để AuthService log được
+            }
         }
     }
 }
