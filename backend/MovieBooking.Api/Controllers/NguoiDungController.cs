@@ -61,7 +61,7 @@ namespace MovieBooking.Api.Controllers
             if (!result)
                 return NotFound(ApiResponse<object>.ErrorResponse("Người dùng không tồn tại"));
 
-            return Ok(ApiResponse<object>.SuccessResponse(null!, "Xóa người dùng thành công"));
+            return Ok(ApiResponse<object?>.SuccessResponse(null, "Xóa người dùng thành công"));
         }
 
         /// <summary>PUT /api/nguoidung/{id}/doi-mat-khau — Đổi mật khẩu</summary>
@@ -75,7 +75,7 @@ namespace MovieBooking.Api.Controllers
             if (!success)
                 return BadRequest(ApiResponse<object>.ErrorResponse(message));
 
-            return Ok(ApiResponse<object>.SuccessResponse(null!, message));
+            return Ok(ApiResponse<object?>.SuccessResponse(null, message));
         }
 
         /// <summary>PUT /api/nguoidung/{id}/vai-tro — Cập nhật vai trò (Admin)</summary>
@@ -90,7 +90,7 @@ namespace MovieBooking.Api.Controllers
             if (!result)
                 return NotFound(ApiResponse<object>.ErrorResponse("Người dùng không tồn tại"));
 
-            return Ok(ApiResponse<object>.SuccessResponse(null!, "Cập nhật vai trò thành công"));
+            return Ok(ApiResponse<object?>.SuccessResponse(null, "Cập nhật vai trò thành công"));
         }
     }
 }

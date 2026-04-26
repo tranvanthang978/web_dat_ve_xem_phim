@@ -10,7 +10,6 @@ using MovieBooking.Application.Mappings;
 using MovieBooking.Infrastructure.Data;
 using MovieBooking.Infrastructure.Repositories;
 using MovieBooking.Infrastructure.Services;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,7 +66,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secret))
     };
 });
 

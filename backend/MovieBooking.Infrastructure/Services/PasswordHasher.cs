@@ -1,19 +1,10 @@
+using MovieBooking.Application.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace MovieBooking.Infrastructure.Services
 {
-    /// <summary>Dịch vụ mã hóa mật khẩu</summary>
-    public interface IPasswordHasher
-    {
-        /// <summary>Mã hóa mật khẩu</summary>
-        string HashPassword(string password);
-
-        /// <summary>Kiểm tra mật khẩu khớp hay không</summary>
-        bool VerifyPassword(string password, string hash);
-    }
-
-    /// <summary>Triển khai mã hóa mật khẩu SHA256</summary>
+    /// <summary>Triển khai mã hóa mật khẩu SHA-256</summary>
     public class Sha256PasswordHasher : IPasswordHasher
     {
         public string HashPassword(string password)
@@ -31,8 +22,7 @@ namespace MovieBooking.Infrastructure.Services
             if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(hash))
                 return false;
 
-            var hashOfInput = HashPassword(password);
-            return hashOfInput.Equals(hash);
+            return HashPassword(password).Equals(hash);
         }
     }
 }

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using MovieBooking.Application.DTOs.Booking;
 using MovieBooking.Application.DTOs.Common;
 using MovieBooking.Application.Interfaces;
@@ -11,17 +10,15 @@ namespace MovieBooking.Api.Controllers
 {
     [ApiController]
     [Route("api/admin")]
-    [Authorize(Roles = "Admin")] // All endpoints require Admin role
+    [Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly MovieBookingDbContext _context;
-        private readonly INguoiDungService _nguoiDungService;
         private readonly IBookingService _bookingService;
 
-        public AdminController(MovieBookingDbContext context, INguoiDungService nguoiDungService, IBookingService bookingService)
+        public AdminController(MovieBookingDbContext context, IBookingService bookingService)
         {
             _context = context;
-            _nguoiDungService = nguoiDungService ?? throw new ArgumentNullException(nameof(nguoiDungService));
             _bookingService = bookingService ?? throw new ArgumentNullException(nameof(bookingService));
         }
 
@@ -29,18 +26,18 @@ namespace MovieBooking.Api.Controllers
         [HttpGet("thong-ke")]
         public async Task<IActionResult> GetThongKe()
         {
-            var tongPhim = await _context.Phims.CountAsync();
-            var dangChieu = await _context.Phims.CountAsync(p => p.DangChieu);
-            var tongRap = await _context.Raps.CountAsync();
+            var tongPhim      = await _context.Phims.CountAsync();
+            var dangChieu     = await _context.Phims.CountAsync(p => p.DangChieu);
+            var tongRap       = await _context.Raps.CountAsync();
             var tongNguoiDung = await _context.NguoiDungs.CountAsync();
-            var tongDonDat = await _context.DonDatVes.CountAsync();
-            var paidStatuses = new[] { "DaThanhToan", "Paid" };
+            var tongDonDat    = await _context.DonDatVes.CountAsync();
+
             var tongDoanhThu = await _context.DonDatVes
-                .Where(d => paidStatuses.Contains(d.TrangThai))
+                .Where(d => d.TrangThai == "Paid")
                 .SumAsync(d => (decimal?)d.TongTien) ?? 0;
 
             var tongVeBan = await _context.Ves
-                .Where(v => paidStatuses.Contains(v.DonDatVe.TrangThai))
+                .Where(v => v.DonDatVe.TrangThai == "Paid")
                 .CountAsync();
 
             var donDatHomNay = await _context.DonDatVes
@@ -48,7 +45,7 @@ namespace MovieBooking.Api.Controllers
                 .CountAsync();
 
             var doanhThuThang = await _context.DonDatVes
-                .Where(d => paidStatuses.Contains(d.TrangThai)
+                .Where(d => d.TrangThai == "Paid"
                     && d.NgayTao.Month == DateTime.Today.Month
                     && d.NgayTao.Year == DateTime.Today.Year)
                 .SumAsync(d => (decimal?)d.TongTien) ?? 0;
@@ -59,7 +56,7 @@ namespace MovieBooking.Api.Controllers
                 {
                     g.Key.TenPhim,
                     g.Key.PosterUrl,
-                    SoDon = g.Count(),
+                    SoDon    = g.Count(),
                     DoanhThu = g.Sum(d => d.TongTien)
                 })
                 .OrderByDescending(x => x.SoDon)
@@ -80,8 +77,7 @@ namespace MovieBooking.Api.Controllers
             {
                 tongPhim, dangChieu, tongRap, tongNguoiDung,
                 tongDonDat, tongVeBan, tongDoanhThu, donDatHomNay, doanhThuThang,
-                tyLeLapDay,
-                topPhim, doanhThu7Ngay
+                tyLeLapDay, topPhim, doanhThu7Ngay
             };
 
             return Ok(ApiResponse<object>.SuccessResponse(stats));
@@ -108,14 +104,11 @@ namespace MovieBooking.Api.Controllers
 
             static string EscapeCsv(string? value)
             {
-                if (string.IsNullOrEmpty(value))
-                    return string.Empty;
-
+                if (string.IsNullOrEmpty(value)) return string.Empty;
                 var escaped = value.Replace("\"", "\"\"");
-                if (escaped.Contains(',') || escaped.Contains('"') || escaped.Contains('\n') || escaped.Contains('\r'))
-                    return $"\"{escaped}\"";
-
-                return escaped;
+                return (escaped.Contains(',') || escaped.Contains('"') || escaped.Contains('\n') || escaped.Contains('\r'))
+                    ? $"\"{escaped}\""
+                    : escaped;
             }
 
             var sb = new System.Text.StringBuilder();
@@ -151,18 +144,16 @@ namespace MovieBooking.Api.Controllers
                 sb.AppendLine(string.Join(',', row.Select(EscapeCsv)));
             }
 
-            var csvContent = sb.ToString();
-            var utf8Bom = System.Text.Encoding.UTF8.GetPreamble();
-            var body = System.Text.Encoding.UTF8.GetBytes(csvContent);
-            var result = new byte[utf8Bom.Length + body.Length];
-            Buffer.BlockCopy(utf8Bom, 0, result, 0, utf8Bom.Length);
-            Buffer.BlockCopy(body, 0, result, utf8Bom.Length, body.Length);
+            var csvBytes  = System.Text.Encoding.UTF8.GetBytes(sb.ToString());
+            var utf8Bom   = System.Text.Encoding.UTF8.GetPreamble();
+            var result    = new byte[utf8Bom.Length + csvBytes.Length];
+            Buffer.BlockCopy(utf8Bom,   0, result, 0,               utf8Bom.Length);
+            Buffer.BlockCopy(csvBytes,  0, result, utf8Bom.Length,  csvBytes.Length);
 
-            return File(result,
-                "text/csv; charset=utf-8",
-                $"DonDatVe_{DateTime.Now:yyyyMMdd_HHmm}.csv");
+            return File(result, "text/csv; charset=utf-8", $"DonDatVe_{DateTime.Now:yyyyMMdd_HHmm}.csv");
         }
 
+        /// <summary>PUT /api/admin/bookings/{id}/status — Cập nhật trạng thái đơn</summary>
         [HttpPut("bookings/{id}/status")]
         public async Task<IActionResult> UpdateBookingStatus(int id, [FromBody] UpdateBookingStatusRequestDto request)
         {
@@ -173,8 +164,7 @@ namespace MovieBooking.Api.Controllers
             if (!success)
                 return BadRequest(ApiResponse<object>.ErrorResponse(message));
 
-            return Ok(ApiResponse<object>.SuccessResponse(null!, message));
+            return Ok(ApiResponse<object?>.SuccessResponse(null, message));
         }
     }
 }
-

@@ -19,17 +19,9 @@ namespace MovieBooking.Api.Controllers
         [HttpGet("validate/{ma}")]
         public async Task<IActionResult> ValidateMa(string ma)
         {
-            var all = await _khuyenMaiService.GetAllKhuyenMaiAsync();
-            var now = DateTime.UtcNow;
-            var km = all.FirstOrDefault(k =>
-                k.MaKhuyenMai.ToUpper() == ma.ToUpper() &&
-                k.ConHieuLuc &&
-                k.NgayBatDau <= now &&
-                k.NgayKetThuc >= now &&
-                (k.SoLuotSuDung == 0 || k.SoLuotDaDung < k.SoLuotSuDung));
-
+            var km = await _khuyenMaiService.ValidateMaKhuyenMaiAsync(ma);
             if (km == null)
-                return NotFound(new { message = "Mã khuyến mại không hợp lệ, đã hết hạn hoặc đã hết lượt sử dụng" });
+                return NotFound(new { message = "Mã khuyến mãi không hợp lệ, đã hết hạn hoặc đã hết lượt sử dụng" });
 
             return Ok(km);
         }

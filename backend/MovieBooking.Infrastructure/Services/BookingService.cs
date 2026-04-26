@@ -106,69 +106,55 @@ namespace MovieBooking.Infrastructure.Services
                 }
             }
 
-            // Tính tổng tiền
-            decimal tongTien = 0;
-            foreach (var ghe in ghes)
-            {
-                decimal giaGhe = lichChieu.GiaCoBan;
-                if (ghe.LoaiGhe == SeatType.VIP.ToString())
-                    giaGhe *= 1.5m;
-                tongTien += giaGhe;
-            }
-
             // Tạo đơn đặt vé với transaction để đảm bảo consistency
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                try
+                // Tính tổng tiền và tạo vé
+                decimal tongTien = 0;
+                var vesChiTiet = new List<Ve>();
+                foreach (var ghe in ghes)
                 {
-                    var donDatVe = new DonDatVe
-                    {
-                        NguoiDungId = bookingRequest.NguoiDungId,
-                        LichChieuId = bookingRequest.LichChieuId,
-                        TongTien = tongTien,
-                        TrangThai = BookingStatus.Pending.ToString(),
-                        Ves = new List<Ve>()
-                    };
-
-                    foreach (var ghe in ghes)
-                    {
-                        decimal giaVe = lichChieu.GiaCoBan;
-                        if (ghe.LoaiGhe == SeatType.VIP.ToString())
-                            giaVe *= 1.5m;
-
-                        donDatVe.Ves.Add(new Ve
-                        {
-                            GheId = ghe.Id,
-                            GiaVe = giaVe
-                        });
-                    }
-
-                    await _unitOfWork.DonDatVes.AddAsync(donDatVe);
-                    await _unitOfWork.SaveChangesAsync();
-
-                    // Tăng lượt sử dụng mã khuyến mãi nếu có
-                    if (!string.IsNullOrWhiteSpace(bookingRequest.MaKhuyenMai))
-                    {
-                        var km = await _context.KhuyenMais
-                            .FirstOrDefaultAsync(k => k.MaKhuyenMai.ToLower() == bookingRequest.MaKhuyenMai.ToLower());
-                        if (km != null)
-                        {
-                            km.SoLuotDaDung++;
-                            await _context.SaveChangesAsync();
-                        }
-                    }
-
-                    await transaction.CommitAsync();
-
-                    // Lấy lại đơn đặt vé với đầy đủ thông tin
-                    var bookingResponse = await GetBookingByIdAsync(donDatVe.Id);
-                    return (true, "Đặt vé thành công", bookingResponse);
+                    decimal giaVe = lichChieu.GiaCoBan;
+                    if (ghe.LoaiGhe == SeatType.VIP.ToString())
+                        giaVe *= 1.5m;
+                    tongTien += giaVe;
+                    vesChiTiet.Add(new Ve { GheId = ghe.Id, GiaVe = giaVe });
                 }
-                catch (Exception ex)
+
+                var donDatVe = new DonDatVe
                 {
-                    await transaction.RollbackAsync();
-                    return (false, $"Lỗi khi tạo đơn đặt vé: {ex.Message}", null);
+                    NguoiDungId = bookingRequest.NguoiDungId,
+                    LichChieuId = bookingRequest.LichChieuId,
+                    TongTien    = tongTien,
+                    TrangThai   = BookingStatus.Pending.ToString(),
+                    Ves         = vesChiTiet
+                };
+
+                await _unitOfWork.DonDatVes.AddAsync(donDatVe);
+                await _unitOfWork.SaveChangesAsync();
+
+                // Tăng lượt sử dụng mã khuyến mãi nếu có
+                if (!string.IsNullOrWhiteSpace(bookingRequest.MaKhuyenMai))
+                {
+                    var km = await _context.KhuyenMais
+                        .FirstOrDefaultAsync(k => k.MaKhuyenMai.ToLower() == bookingRequest.MaKhuyenMai.ToLower());
+                    if (km != null)
+                    {
+                        km.SoLuotDaDung++;
+                        await _context.SaveChangesAsync();
+                    }
                 }
+
+                await transaction.CommitAsync();
+
+                var bookingResponse = await GetBookingByIdAsync(donDatVe.Id);
+                return (true, "Đặt vé thành công", bookingResponse);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return (false, $"Lỗi khi tạo đơn đặt vé: {ex.Message}", null);
             }
         }
 

@@ -54,7 +54,7 @@ namespace MovieBooking.Api.Controllers
             if (!success)
                 return BadRequest(ApiResponse<object>.ErrorResponse(message));
 
-            return Ok(ApiResponse<object>.SuccessResponse(null, message));
+            return Ok(ApiResponse<object?>.SuccessResponse(null, message));
         }
 
         [HttpPost("verify-otp")]
@@ -67,7 +67,7 @@ namespace MovieBooking.Api.Controllers
             if (!success)
                 return BadRequest(ApiResponse<object>.ErrorResponse(message));
 
-            return Ok(ApiResponse<object>.SuccessResponse(null, message));
+            return Ok(ApiResponse<object?>.SuccessResponse(null, message));
         }
 
         [HttpPost("reset-password")]
@@ -83,7 +83,7 @@ namespace MovieBooking.Api.Controllers
             if (!success)
                 return BadRequest(ApiResponse<object>.ErrorResponse(message));
 
-            return Ok(ApiResponse<object>.SuccessResponse(null, message));
+            return Ok(ApiResponse<object?>.SuccessResponse(null, message));
         }
     }
 }

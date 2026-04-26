@@ -118,16 +118,16 @@ namespace MovieBooking.Infrastructure.Services
             return (true, "Mã OTP đã được gửi tới email của bạn");
         }
 
-        public async Task<(bool Success, string Message)> VerifyOtpAsync(string email, string otp)
+        public Task<(bool Success, string Message)> VerifyOtpAsync(string email, string otp)
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(otp))
-                return (false, "Thông tin không hợp lệ");
+                return Task.FromResult((false, "Thông tin không hợp lệ"));
 
             var cacheKey = GetPasswordResetCacheKey(email);
             if (!_cache.TryGetValue<string>(cacheKey, out var savedOtp) || savedOtp != otp)
-                return (false, "Mã OTP không đúng hoặc đã hết hạn");
+                return Task.FromResult((false, "Mã OTP không đúng hoặc đã hết hạn"));
 
-            return (true, "OTP hợp lệ");
+            return Task.FromResult((true, "OTP hợp lệ"));
         }
 
         public async Task<(bool Success, string Message)> ResetPasswordAsync(string email, string otp, string matKhauMoi)
@@ -186,8 +186,7 @@ namespace MovieBooking.Infrastructure.Services
 
         private static string GenerateOtp()
         {
-            var random = new Random();
-            return random.Next(100000, 999999).ToString();
+            return Random.Shared.Next(100000, 999999).ToString();
         }
 
         private static string GetPasswordResetCacheKey(string email)

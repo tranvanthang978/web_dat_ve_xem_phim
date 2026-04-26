@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MovieBooking.Domain.Enums;
 using MovieBooking.Infrastructure.Data;
 
 namespace MovieBooking.Infrastructure.Services
@@ -181,13 +182,13 @@ namespace MovieBooking.Infrastructure.Services
 
             // Nhóm loại ghế và tính giá
             var loaiGhes = lichChieu.PhongChieu.Ghes
-                .GroupBy(g => g.LoaiGhe ?? "Thường")
+                .GroupBy(g => string.IsNullOrEmpty(g.LoaiGhe) ? SeatType.Thuong.ToString() : g.LoaiGhe)
                 .Select(g => new { LoaiGhe = g.Key, SoLuong = g.Count() })
                 .ToList();
 
             var lines = loaiGhes.Select(lg =>
             {
-                decimal gia = lg.LoaiGhe.ToLower() == "vip"
+                decimal gia = lg.LoaiGhe.Equals(SeatType.VIP.ToString(), StringComparison.OrdinalIgnoreCase)
                     ? lichChieu.GiaCoBan * 1.5m
                     : lichChieu.GiaCoBan;
                 return $"- {lg.LoaiGhe}: {gia:N0}đ ({lg.SoLuong} ghế)";

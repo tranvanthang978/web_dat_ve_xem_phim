@@ -4,6 +4,7 @@ using MovieBooking.Application.DTOs.Cinema;
 using MovieBooking.Application.DTOs.Showtime;
 using MovieBooking.Application.Interfaces;
 using MovieBooking.Domain.Entities;
+using MovieBooking.Domain.Enums;
 using MovieBooking.Infrastructure.Data;
 
 namespace MovieBooking.Infrastructure.Services
@@ -82,7 +83,7 @@ namespace MovieBooking.Infrastructure.Services
 
             var bookedGheIds = await _context.Ves
                 .Where(v => v.DonDatVe.LichChieuId == lichChieuId && 
-                           v.DonDatVe.TrangThai != "Huy")
+                           v.DonDatVe.TrangThai != BookingStatus.Cancelled.ToString())
                 .Select(v => v.GheId)
                 .ToListAsync();
 

@@ -139,7 +139,7 @@ namespace MovieBooking.Api.Controllers
             _ = Task.Run(async () =>
             {
                 try { await _emailService.SendBookingConfirmationAsync(request.DonDatVeId); }
-                catch { }
+                catch (Exception ex) { Console.WriteLine($"[WARN] Gửi email xác nhận thất bại: {ex.Message}"); }
             });
 
             return Ok(new { message = "Xác nhận thanh toán thành công" });

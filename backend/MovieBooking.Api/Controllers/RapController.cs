@@ -86,7 +86,7 @@ namespace MovieBooking.Api.Controllers
                 if (!result)
                     return NotFound(ApiResponse<object>.ErrorResponse("Rạp không tồn tại"));
 
-                return Ok(ApiResponse<object>.SuccessResponse(null!, "Xóa rạp thành công"));
+                return Ok(ApiResponse<object?>.SuccessResponse(null, "Xóa rạp thành công"));
             }
             catch (InvalidOperationException ex)
             {
@@ -161,7 +161,7 @@ namespace MovieBooking.Api.Controllers
             if (!success)
                 return BadRequest(ApiResponse<object>.ErrorResponse(message));
 
-            return Ok(ApiResponse<object>.SuccessResponse(null!, message));
+            return Ok(ApiResponse<object?>.SuccessResponse(null, message));
         }
 
         // ==================== GHẾ ====================
