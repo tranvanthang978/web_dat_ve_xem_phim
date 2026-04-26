@@ -1,4 +1,5 @@
 using AutoMapper;
+using Google.Apis.Auth;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -150,6 +151,63 @@ namespace MovieBooking.Infrastructure.Services
 
             _cache.Remove(cacheKey);
             return (true, "Đặt lại mật khẩu thành công");
+        }
+
+        public async Task<(bool Success, string Message, AuthResponseDto? Data)> GoogleLoginAsync(string credential)
+        {
+            try
+            {
+                var googleClientId = _configuration["GoogleAuth:ClientId"]
+                    ?? throw new InvalidOperationException("Google ClientId not configured");
+
+                var settings = new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[] { googleClientId }
+                };
+
+                var payload = await GoogleJsonWebSignature.ValidateAsync(credential, settings);
+
+                // Tìm user theo email
+                var nguoiDung = await _unitOfWork.NguoiDungs.FirstOrDefaultAsync(u => u.Email == payload.Email);
+
+                if (nguoiDung == null)
+                {
+                    // Tự động tạo tài khoản mới cho user Google
+                    nguoiDung = new NguoiDung
+                    {
+                        HoTen = payload.Name ?? payload.Email,
+                        Email = payload.Email,
+                        TenDangNhap = payload.Email, // Dùng email làm tên đăng nhập
+                        MatKhauHash = _passwordHasher.HashPassword(Guid.NewGuid().ToString()), // Mật khẩu ngẫu nhiên
+                        VaiTro = UserRole.KhachHang.ToString(),
+                        SoDienThoai = string.Empty
+                    };
+
+                    await _unitOfWork.NguoiDungs.AddAsync(nguoiDung);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+                var token = GenerateJwtToken(nguoiDung);
+                var response = new AuthResponseDto
+                {
+                    UserId = nguoiDung.Id,
+                    HoTen = nguoiDung.HoTen,
+                    TenDangNhap = nguoiDung.TenDangNhap,
+                    Email = nguoiDung.Email,
+                    VaiTro = nguoiDung.VaiTro,
+                    Token = token
+                };
+
+                return (true, "Đăng nhập Google thành công", response);
+            }
+            catch (InvalidJwtException)
+            {
+                return (false, "Token Google không hợp lệ", null);
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Lỗi xác thực Google: {ex.Message}", null);
+            }
         }
 
         private string GenerateJwtToken(NguoiDung nguoiDung)

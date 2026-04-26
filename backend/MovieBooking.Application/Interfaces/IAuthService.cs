@@ -9,5 +9,6 @@ namespace MovieBooking.Application.Interfaces
         Task<(bool Success, string Message)> GeneratePasswordResetTokenAsync(string email);
         Task<(bool Success, string Message)> VerifyOtpAsync(string email, string otp);
         Task<(bool Success, string Message)> ResetPasswordAsync(string email, string otp, string matKhauMoi);
+        Task<(bool Success, string Message, AuthResponseDto? Data)> GoogleLoginAsync(string credential);
     }
 }

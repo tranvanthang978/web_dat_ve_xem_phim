@@ -85,5 +85,19 @@ namespace MovieBooking.Api.Controllers
 
             return Ok(ApiResponse<object?>.SuccessResponse(null, message));
         }
+
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Credential))
+                return BadRequest(ApiResponse<object>.ErrorResponse("Token Google không hợp lệ"));
+
+            var (success, message, data) = await _authService.GoogleLoginAsync(dto.Credential);
+
+            if (!success)
+                return BadRequest(ApiResponse<object>.ErrorResponse(message));
+
+            return Ok(ApiResponse<AuthResponseDto>.SuccessResponse(data!, message));
+        }
     }
 }

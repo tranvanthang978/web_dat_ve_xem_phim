@@ -27,6 +27,11 @@ const authService = {
   async resetPassword(email, otp, matKhauMoi) {
     const res = await api.post('/auth/reset-password', { email, otp, matKhauMoi })
     return res.data
+  },
+
+  async googleLogin(credential) {
+    const res = await api.post('/auth/google-login', { credential })
+    return res.data
   }
 }
 
