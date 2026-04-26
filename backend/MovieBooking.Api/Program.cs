@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 using MovieBooking.Api.Middlewares;
 using MovieBooking.Application.Interfaces;
 using MovieBooking.Application.Mappings;
@@ -61,6 +62,30 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secret))
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var unitOfWork = context.HttpContext.RequestServices.GetRequiredService<IUnitOfWork>();
+            var userIdStr = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value 
+                         ?? context.Principal?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            var tokenVersionStr = context.Principal?.FindFirst("TokenVersion")?.Value;
+
+            if (int.TryParse(userIdStr, out int userId) && int.TryParse(tokenVersionStr, out int tokenVersion))
+            {
+                var user = await unitOfWork.NguoiDungs.GetByIdAsync(userId);
+                if (user == null || user.TokenVersion != tokenVersion)
+                {
+                    context.Fail("Token is no longer valid.");
+                }
+            }
+            else
+            {
+                context.Fail("Invalid token claims.");
+            }
+        }
     };
 });
 

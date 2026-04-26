@@ -109,6 +109,8 @@ export default function AccountInfo() {
   const handleChangePassword = async (e) => {
     e.preventDefault()
     if (!pwForm.matKhauCu || !pwForm.matKhauMoi) { showMsg('err', 'Vui lòng điền đầy đủ'); return }
+    if (pwForm.matKhauMoi.length < 6) { showMsg('err', 'Mật khẩu mới phải có ít nhất 6 ký tự'); return }
+    if (!/[A-Za-z]/.test(pwForm.matKhauMoi) || !/[0-9]/.test(pwForm.matKhauMoi)) { showMsg('err', 'Mật khẩu mới phải chứa cả chữ và số'); return }
     if (pwForm.matKhauMoi !== pwForm.xacNhan) { showMsg('err', 'Mật khẩu xác nhận không khớp'); return }
     setSaving(true)
     try {

@@ -117,8 +117,9 @@ export default function ForgotPassword() {
     e.preventDefault()
     setError('')
     if (!matKhauMoi || !xacNhanMatKhau) { setError('Vui lòng điền đầy đủ thông tin'); return }
-    if (matKhauMoi !== xacNhanMatKhau) { setError('Mật khẩu xác nhận không khớp'); return }
     if (matKhauMoi.length < 6) { setError('Mật khẩu phải có ít nhất 6 ký tự'); return }
+    if (!/[A-Za-z]/.test(matKhauMoi) || !/[0-9]/.test(matKhauMoi)) { setError('Mật khẩu phải chứa cả chữ và số'); return }
+    if (matKhauMoi !== xacNhanMatKhau) { setError('Mật khẩu xác nhận không khớp'); return }
     setLoading(true)
     try {
       const res = await authService.resetPassword(email.trim(), otp.trim(), matKhauMoi)

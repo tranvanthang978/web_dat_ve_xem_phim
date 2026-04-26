@@ -68,7 +68,7 @@ namespace MovieBooking.Infrastructure.Services
             phim.DienVien   = updatePhimDto.DienVien;
             phim.ThoiLuong  = updatePhimDto.ThoiLuong;
             phim.DangChieu  = updatePhimDto.DangChieu;
-            phim.NgayCapNhat = DateTime.UtcNow;
+            phim.NgayCapNhat = DateTime.Now;
 
             _unitOfWork.Phims.Update(phim);
             await _unitOfWork.SaveChangesAsync();

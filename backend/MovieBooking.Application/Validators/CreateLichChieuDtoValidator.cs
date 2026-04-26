@@ -9,7 +9,7 @@ namespace MovieBooking.Application.Validators
         {
             RuleFor(x => x.GioBatDau)
                 .NotEmpty().WithMessage("Giờ bắt đầu không được để trống")
-                .GreaterThan(DateTime.UtcNow.AddMinutes(-30)).WithMessage("Giờ bắt đầu không hợp lệ");
+                .GreaterThan(DateTime.Now.AddMinutes(-30)).WithMessage("Giờ bắt đầu không hợp lệ");
 
             RuleFor(x => x.GioKetThuc)
                 .NotEmpty().WithMessage("Giờ kết thúc không được để trống")

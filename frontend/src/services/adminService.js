@@ -1,7 +1,7 @@
 import api from './api'
 
 const adminService = {
-  getThongKe: () => api.get('/admin/thong-ke'),
+  getThongKe: (days = 7) => api.get(`/admin/thong-ke?days=${days}`),
   getAllBookings: () => api.get('/booking'),
   updateBookingStatus: (id, data) => api.put(`/admin/bookings/${id}/status`, data),
   getAllNguoiDung: () => api.get('/nguoidung'),

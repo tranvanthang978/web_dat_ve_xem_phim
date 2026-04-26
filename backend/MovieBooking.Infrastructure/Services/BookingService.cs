@@ -128,7 +128,7 @@ namespace MovieBooking.Infrastructure.Services
                     LichChieuId = bookingRequest.LichChieuId,
                     TongTien    = tongTien,
                     TrangThai   = BookingStatus.Pending.ToString(),
-                    ExpiredAt   = DateTime.UtcNow.AddMinutes(15), // Hết hạn giữ ghế sau 15 phút
+                    ExpiredAt   = DateTime.Now.AddMinutes(15), // Hết hạn giữ ghế sau 15 phút
                     Ves         = vesChiTiet
                 };
 
@@ -219,7 +219,7 @@ namespace MovieBooking.Infrastructure.Services
                 return false;
 
             donDatVe.TrangThai = BookingStatus.Cancelled.ToString();
-            donDatVe.NgayCapNhat = DateTime.UtcNow;
+            donDatVe.NgayCapNhat = DateTime.Now;
 
             _unitOfWork.DonDatVes.Update(donDatVe);
             await _unitOfWork.SaveChangesAsync();
@@ -257,7 +257,7 @@ namespace MovieBooking.Infrastructure.Services
             }
 
             donDatVe.TrangThai = parsedStatus.ToString();
-            donDatVe.NgayCapNhat = DateTime.UtcNow;
+            donDatVe.NgayCapNhat = DateTime.Now;
             _unitOfWork.DonDatVes.Update(donDatVe);
             await _unitOfWork.SaveChangesAsync();
             return (true, "Cập nhật trạng thái đơn đặt vé thành công");

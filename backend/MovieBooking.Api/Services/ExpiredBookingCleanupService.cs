@@ -47,7 +47,7 @@ namespace MovieBooking.Api.Services
             using var scope = _serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<MovieBookingDbContext>();
 
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
             var pendingStatus = BookingStatus.Pending.ToString();
             var cancelledStatus = BookingStatus.Cancelled.ToString();
 
@@ -63,7 +63,7 @@ namespace MovieBooking.Api.Services
             foreach (var booking in expiredBookings)
             {
                 booking.TrangThai = cancelledStatus;
-                booking.NgayCapNhat = DateTime.UtcNow;
+                booking.NgayCapNhat = DateTime.Now;
                 _logger.LogInformation("[BookingCleanup] Auto-cancelled booking #{Id} (expired at {ExpiredAt})", 
                     booking.Id, booking.ExpiredAt);
             }

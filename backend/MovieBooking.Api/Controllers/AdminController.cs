@@ -23,7 +23,7 @@ namespace MovieBooking.Api.Controllers
         }
 
         [HttpGet("thong-ke")]
-        public async Task<IActionResult> GetThongKe()
+        public async Task<IActionResult> GetThongKe([FromQuery] int days = 7)
         {
             var tongPhim      = await _context.Phims.CountAsync();
             var dangChieu     = await _context.Phims.CountAsync(p => p.DangChieu);
@@ -63,8 +63,9 @@ namespace MovieBooking.Api.Controllers
                 .Take(3)
                 .ToListAsync();
 
-            var doanhThu7Ngay = await _context.DonDatVes
-                .Where(d => d.NgayTao >= DateTime.Today.AddDays(-6))
+            var startDate = DateTime.Today.AddDays(-(days - 1));
+            var doanhThuBieuDo = await _context.DonDatVes
+                .Where(d => d.NgayTao >= startDate)
                 .GroupBy(d => d.NgayTao.Date)
                 .Select(g => new { Ngay = g.Key, DoanhThu = g.Sum(d => d.TongTien), SoDon = g.Count() })
                 .OrderBy(x => x.Ngay)
@@ -76,7 +77,7 @@ namespace MovieBooking.Api.Controllers
             {
                 tongPhim, dangChieu, tongRap, tongNguoiDung,
                 tongDonDat, tongVeBan, tongDoanhThu, donDatHomNay, doanhThuThang,
-                tyLeLapDay, topPhim, doanhThu7Ngay
+                tyLeLapDay, topPhim, doanhThuBieuDo
             };
 
             return Ok(ApiResponse<object>.SuccessResponse(stats));

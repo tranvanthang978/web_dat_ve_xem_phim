@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieBooking.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using MovieBooking.Infrastructure.Data;
 namespace MovieBooking.Infrastructure.Migrations
 {
     [DbContext(typeof(MovieBookingDbContext))]
-    partial class MovieBookingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260426182920_AddTokenVersionToUser")]
+    partial class AddTokenVersionToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

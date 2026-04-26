@@ -55,7 +55,7 @@ namespace MovieBooking.Infrastructure.Services
             rap.TenRap = dto.TenRap;
             rap.DiaChi = dto.DiaChi;
             rap.Hotline = dto.Hotline;
-            rap.NgayCapNhat = DateTime.UtcNow;
+            rap.NgayCapNhat = DateTime.Now;
 
             _unitOfWork.Raps.Update(rap);
             await _unitOfWork.SaveChangesAsync();
@@ -151,7 +151,7 @@ namespace MovieBooking.Infrastructure.Services
                 throw new InvalidOperationException("Tên phòng chiếu đã tồn tại trong rạp này.");
 
             phongChieu.TenPhong = dto.TenPhong;
-            phongChieu.NgayCapNhat = DateTime.UtcNow;
+            phongChieu.NgayCapNhat = DateTime.Now;
 
             // Cập nhật ghế nếu cấu hình thay đổi
             if (dto.SoHangGhe > 0 && dto.SoGheMotHang > 0)

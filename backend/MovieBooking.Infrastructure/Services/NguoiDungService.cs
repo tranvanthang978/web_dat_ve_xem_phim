@@ -43,7 +43,7 @@ namespace MovieBooking.Infrastructure.Services
             user.HoTen = dto.HoTen;
             user.Email = dto.Email;
             user.SoDienThoai = dto.SoDienThoai;
-            user.NgayCapNhat = DateTime.UtcNow;
+            user.NgayCapNhat = DateTime.Now;
 
             _unitOfWork.NguoiDungs.Update(user);
             await _unitOfWork.SaveChangesAsync();
@@ -69,7 +69,8 @@ namespace MovieBooking.Infrastructure.Services
                 return (false, "Mật khẩu cũ không đúng");
 
             user.MatKhauHash = _passwordHasher.HashPassword(dto.MatKhauMoi);
-            user.NgayCapNhat = DateTime.UtcNow;
+            user.TokenVersion++;
+            user.NgayCapNhat = DateTime.Now;
 
             _unitOfWork.NguoiDungs.Update(user);
             await _unitOfWork.SaveChangesAsync();
@@ -82,7 +83,7 @@ namespace MovieBooking.Infrastructure.Services
             if (user == null) return false;
 
             user.VaiTro = vaiTro;
-            user.NgayCapNhat = DateTime.UtcNow;
+            user.NgayCapNhat = DateTime.Now;
 
             _unitOfWork.NguoiDungs.Update(user);
             await _unitOfWork.SaveChangesAsync();

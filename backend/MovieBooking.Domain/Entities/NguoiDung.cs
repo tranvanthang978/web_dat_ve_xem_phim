@@ -1,4 +1,4 @@
-﻿using MovieBooking.Domain.Common;
+using MovieBooking.Domain.Common;
 
 namespace MovieBooking.Domain.Entities
 {
@@ -10,6 +10,7 @@ namespace MovieBooking.Domain.Entities
         public string VaiTro { get; set; } = string.Empty;
         public string SoDienThoai { get; set; } = string.Empty;
         public string TenDangNhap { get; set; } = string.Empty;
+        public int TokenVersion { get; set; } = 0;
 
         public ICollection<DonDatVe> DonDatVes { get; set; } = new List<DonDatVe>();
     }

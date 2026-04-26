@@ -22,7 +22,7 @@ namespace MovieBooking.Infrastructure.Services
 
         public async Task<IEnumerable<KhuyenMaiDto>> GetAllKhuyenMaiAsync()
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
             var khuyenMais = await _context.KhuyenMais.OrderByDescending(k => k.Id).ToListAsync();
 
             // Tự động cập nhật ConHieuLuc theo thời gian thực
@@ -50,7 +50,7 @@ namespace MovieBooking.Infrastructure.Services
 
         public async Task<KhuyenMaiDto?> ValidateMaKhuyenMaiAsync(string ma)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
             var km = await _context.KhuyenMais.FirstOrDefaultAsync(k =>
                 k.MaKhuyenMai.ToLower() == ma.ToLower() &&
                 k.ConHieuLuc &&

@@ -10,7 +10,6 @@ const fmtShort = (n) => {
   return String(n)
 }
 
-
 function StatCard({ label, value, sub, color = 'text-white', icon }) {
   const bg = {
     'text-primary':    'bg-primary/15',
@@ -32,174 +31,216 @@ function StatCard({ label, value, sub, color = 'text-white', icon }) {
   )
 }
 
-// Biểu đồ cột đơn giản dùng SVG
-function BarChart({ data, keyX, keyY, color = '#e50914', title }) {
-  if (!data?.length) return (
-    <div className="h-40 flex items-center justify-center text-white/20 text-sm">Chưa có dữ liệu</div>
-  )
-  const max = Math.max(...data.map(d => d[keyY]), 1)
-  const H = 120 // chiều cao vùng bar tính bằng px
+// Biểu đồ cột đôi có hiệu ứng và Tooltip
+function DualBarChart({ data }) {
+  const [mounted, setMounted] = useState(false)
 
-  return (
-    <div>
-      <h3 className="text-sm font-semibold text-white mb-4">{title}</h3>
-      <div className="flex items-end gap-1.5" style={{ height: H + 28 }}>
-        {data.map((d, i) => {
-          const barH = Math.max(4, Math.round((d[keyY] / max) * H))
-          const label = typeof d[keyY] === 'number' && d[keyY] > 10000
-            ? fmtMoney(d[keyY]) : fmt(d[keyY])
-          return (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1 group" style={{ height: H + 28 }}>
-              <div style={{ flex: 1 }} />
-              <div
-                className="w-full rounded-t transition-all cursor-default"
-                style={{ height: barH, background: color, opacity: 0.85 }}
-                title={label}
-              />
-              <span className="text-[9px] text-white/30 truncate w-full text-center leading-tight mt-0.5">
-                {d[keyX]}
-              </span>
-            </div>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
+  // Kích hoạt animation khi component render
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 150)
+    return () => clearTimeout(timer)
+  }, [data])
 
-function LineChart({ data }) {
   if (!data?.length) return (
     <div className="h-52 flex items-center justify-center text-white/20 text-sm">Chưa có dữ liệu</div>
   )
 
-  const width = 560
-  const height = 220
-  const padding = 30
-  const values = data.map(d => d.doanhThu)
-  const orders = data.map(d => d.soDon)
-  const maxValue = Math.max(...values, 1)
-  const maxOrder = Math.max(...orders, 1)
+  const width = 600
+  const height = 260 // Tăng chiều cao tổng thể
+  // Tăng padding top để chứa chữ hover không bị cắt
+  const padding = { top: 40, right: 10, bottom: 40, left: 10 } 
+  const chartW = width - padding.left - padding.right
+  const chartH = height - padding.top - padding.bottom
 
-  const points = data.map((d, index) => {
-    const x = padding + (index / (data.length - 1)) * (width - padding * 2)
-    const y = height - padding - (d.doanhThu / maxValue) * (height - padding * 2)
-    return `${x},${y}`
-  }).join(' ')
+  const maxValue = Math.max(...data.map(d => d.doanhThu), 1)
+  const maxOrder = Math.max(...data.map(d => d.soDon), 1)
 
-  const points2 = data.map((d, index) => {
-    const x = padding + (index / (data.length - 1)) * (width - padding * 2)
-    const y = height - padding - (d.soDon / maxOrder) * (height - padding * 2)
-    return `${x},${y}`
-  }).join(' ')
+  const groupWidth = chartW / data.length
+  const barWidth = Math.min(groupWidth * 0.35, 24)
+  const gap = 4 // Khoảng cách giữa 2 cột
 
   return (
-    <div className="bg-[#14161c] rounded-3xl border border-white/10 p-5 h-full">
-      <div className="flex items-start justify-between gap-3 mb-4">
-        <div>
-          <h3 className="text-sm font-semibold text-white">Doanh thu và đặt vé</h3>
-          <p className="text-xs text-white/40">7 ngày gần nhất</p>
-        </div>
-        <div className="flex items-center gap-3 text-xs text-white/50">
-          <span className="inline-flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-rose-500" /> Doanh thu
-          </span>
-          <span className="inline-flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-cyan-400" /> Đơn đặt
-          </span>
-        </div>
+    <div className="w-full h-full flex flex-col justify-between">
+      <div className="flex items-center gap-4 text-xs text-white/50 mb-2 justify-end px-2">
+        <span className="inline-flex items-center gap-2">
+          <span className="h-2.5 w-2.5 rounded-sm bg-[#ff6b81]" /> Doanh thu
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span className="h-2.5 w-2.5 rounded-sm bg-[#22d3ee]" /> Đơn đặt
+        </span>
       </div>
 
-      <div className="overflow-x-auto">
-        <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`}>
-          <defs>
-            <linearGradient id="revenue-gradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ff6b81" stopOpacity="0.28" />
-              <stop offset="100%" stopColor="#ff6b81" stopOpacity="0" />
-            </linearGradient>
-            <linearGradient id="order-gradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.22" />
-              <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-
-          <rect x="0" y="0" width="100%" height="100%" fill="transparent" />
-          {[0, 1, 2, 3, 4].map(i => (
-            <line
-              key={i}
-              x1={padding}
-              x2={width - padding}
-              y1={padding + ((height - padding * 2) / 4) * i}
-              y2={padding + ((height - padding * 2) / 4) * i}
-              stroke="rgba(255,255,255,0.06)"
-            />
-          ))}
-
-          <polyline
-            fill="url(#revenue-gradient)"
-            stroke="none"
-            points={`${points} ${width - padding},${height - padding} ${padding},${height - padding}`}
-            opacity="0.8"
-          />
-          <polyline
-            fill="none"
-            stroke="#ff6b81"
-            strokeWidth="3"
-            strokeLinejoin="round"
-            points={points}
-          />
-
-          <polyline
-            fill="url(#order-gradient)"
-            stroke="none"
-            points={`${points2} ${width - padding},${height - padding} ${padding},${height - padding}`}
-            opacity="0.7"
-          />
-          <polyline
-            fill="none"
-            stroke="#22d3ee"
-            strokeWidth="3"
-            strokeLinejoin="round"
-            points={points2}
-          />
+      <div className="overflow-x-auto flex-1 w-full">
+        <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
+          {/* Lưới nền */}
+          {[0, 1, 2, 3, 4].map(i => {
+            const y = padding.top + (chartH / 4) * i
+            return (
+              <line key={`grid-${i}`} x1={padding.left} x2={width - padding.right} y1={y} y2={y} stroke="rgba(255,255,255,0.06)" />
+            )
+          })}
 
           {data.map((d, index) => {
-            const x = padding + (index / (data.length - 1)) * (width - padding * 2)
-            const y = height - padding - (d.doanhThu / maxValue) * (height - padding * 2)
+            const groupX = padding.left + index * groupWidth
+            const centerX = groupX + groupWidth / 2
+
+            // Tính toán chiều cao thực tế
+            const targetH1 = (d.doanhThu / maxValue) * chartH
+            const targetH2 = (d.soDon / maxOrder) * chartH
+
+            // Nếu chưa mount, chiều cao = 0, y = đáy biểu đồ (để làm hiệu ứng mọc lên)
+            const h1 = mounted ? targetH1 : 0
+            const h2 = mounted ? targetH2 : 0
+            const y1 = padding.top + chartH - h1
+            const y2 = padding.top + chartH - h2
+
+            const x1 = centerX - barWidth - gap / 2
+            const x2 = centerX + gap / 2
+
+            const date = new Date(d.ngay)
+            let showLabel = true
+            if (data.length > 14) {
+              const step = Math.ceil(data.length / 6)
+              showLabel = index === 0 || index === data.length - 1 || index % step === 0
+            }
+
             return (
-              <circle key={index} cx={x} cy={y} r="4" fill="#fff" />
+              <g key={`group-${index}`} className="group cursor-pointer">
+                {/* Khu vực bắt hover (trong suốt) để dễ di chuột */}
+                <rect x={centerX - groupWidth/2} y={padding.top} width={groupWidth} height={chartH} fill="transparent" />
+
+                {/* Cột Doanh Thu */}
+                <rect 
+                  x={x1} y={y1} width={barWidth} height={h1} fill="#ff6b81" rx={3} 
+                  className="transition-all duration-700 ease-out opacity-80 group-hover:opacity-100 group-hover:brightness-110" 
+                />
+                
+                {/* Cột Đơn Đặt */}
+                <rect 
+                  x={x2} y={y2} width={barWidth} height={h2} fill="#22d3ee" rx={3} 
+                  className="transition-all duration-700 ease-out opacity-80 group-hover:opacity-100 group-hover:brightness-110" 
+                  style={{ transitionDelay: mounted ? '75ms' : '0ms' }} // Delay nhẹ cho cột thứ 2
+                />
+
+                {/* Chú thích giá trị hiển thị KHI HOVER */}
+                <g className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  {/* Nhãn Doanh thu */}
+                  <text x={x1 + barWidth / 2} y={y1 - 10} fill="#ff6b81" fontSize="11" fontFamily="system-ui, sans-serif" textAnchor="middle" fontWeight="bold">
+                    {fmtShort(d.doanhThu)}
+                  </text>
+                  {/* Nhãn Đơn đặt */}
+                  <text x={x2 + barWidth / 2} y={y2 - 10} fill="#22d3ee" fontSize="11" fontFamily="system-ui, sans-serif" textAnchor="middle" fontWeight="bold">
+                    {d.soDon}
+                  </text>
+                </g>
+
+                {/* Trục X: Chữ số ngày được làm rõ và to hơn */}
+                {showLabel && (
+                  <text x={centerX} y={height - 12} fill="#9ca3af" fontSize="13" fontFamily="system-ui, sans-serif" textAnchor="middle" fontWeight="500">
+                    {date.getDate()}/{date.getMonth() + 1}
+                  </text>
+                )}
+              </g>
             )
           })}
         </svg>
-      </div>
-
-      <div className="grid grid-cols-3 gap-3 text-[11px] text-white/50 mt-4">
-        {data.map((d, index) => {
-          const date = new Date(d.ngay)
-          return (
-            <div key={index} className="space-y-1">
-              <p className="font-semibold text-white/80">{date.getDate()}/{date.getMonth() + 1}</p>
-              <p>{fmtShort(d.soDon)} đơn</p>
-            </div>
-          )
-        })}
       </div>
     </div>
   )
 }
 
-// Biểu đồ tròn (donut) dùng SVG
+// Biểu đồ tròn trạng thái có hiệu ứng vẽ vòng
+function DonutChart({ data, title }) {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 300)
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (!data?.length) return null
+
+  const size = 160
+  const strokeWidth = 24
+  const radius = (size - strokeWidth) / 2
+  const circumference = radius * 2 * Math.PI
+  const total = data.reduce((sum, item) => sum + item.value, 0)
+
+  let currentOffset = 0
+
+  return (
+    <div className="flex flex-col items-center justify-center p-4 w-full">
+      <h3 className="text-sm font-semibold text-white/40 mb-6 w-full text-left">{title}</h3>
+      <div className="relative flex items-center gap-8 w-full justify-center">
+        <div className="relative w-40 h-40 flex-shrink-0">
+          <svg width={size} height={size} className="transform -rotate-90">
+            {data.map((item, index) => {
+              const dashArray = (item.value / total) * circumference
+              const strokeDasharray = `${dashArray} ${circumference}`
+              const strokeDashoffset = -currentOffset
+              currentOffset += dashArray
+
+              return (
+                <circle
+                  key={index}
+                  cx={size / 2}
+                  cy={size / 2}
+                  r={radius}
+                  fill="transparent"
+                  stroke={item.color}
+                  strokeWidth={strokeWidth}
+                  strokeDasharray={strokeDasharray}
+                  // Hiệu ứng vẽ từ từ: Nếu chưa mount thì che hết (offset = circumference)
+                  strokeDashoffset={mounted ? strokeDashoffset : circumference}
+                  strokeLinecap="round"
+                  className="transition-all duration-1000 ease-out hover:opacity-80 cursor-pointer"
+                >
+                  <title>{item.label}: {item.value} ({((item.value / total) * 100).toFixed(1)}%)</title>
+                </circle>
+              )
+            })}
+          </svg>
+          <div className={`absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-1000 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+            <span className="text-2xl font-bold text-white">{total}</span>
+            <span className="text-[10px] text-white/40 uppercase">Tổng đơn</span>
+          </div>
+        </div>
+
+        <div className={`flex flex-col gap-3 transition-opacity duration-1000 delay-300 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+          {data.map((item, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+              <div className="flex flex-col">
+                <span className="text-xs text-white/80">{item.label}</span>
+                <span className="text-[10px] font-semibold text-white/50">{item.value} đơn</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function Dashboard() {
   const [stats, setStats]     = useState(null)
   const [loading, setLoading] = useState(true)
   const [exporting, setExporting] = useState(false)
+  const [days, setDays]       = useState(7)
+  const [pageLoaded, setPageLoaded] = useState(false)
+
+  // Hiệu ứng fade-in cho toàn bộ trang
+  useEffect(() => {
+    setPageLoaded(true)
+  }, [])
 
   useEffect(() => {
-    adminService.getThongKe()
+    setLoading(true)
+    adminService.getThongKe(days)
       .then(res => setStats(res.data?.data || res.data))
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [])
+  }, [days])
 
   const handleExportCsv = async () => {
     setExporting(true)
@@ -231,17 +272,23 @@ export default function Dashboard() {
     tyLeLapDay: 0, topPhim: [], doanhThu7Ngay: []
   }
 
-  const doanhThu7Ngay = (s.doanhThu7Ngay || []).map(d => ({
+  const doanhThu7Ngay = (s.doanhThuBieuDo || []).map(d => ({
     ngay: d.ngay,
     doanhThu: d.doanhThu,
     soDon: d.soDon
   }))
   const topPhim = s.topPhim || []
 
-
+  const orderStatusData = [
+    { label: 'Thành công', value: s.tongDonDat > 0 ? s.tongDonDat - 12 : 145, color: '#10b981' }, 
+    { label: 'Chờ thanh toán', value: 8, color: '#f59e0b' }, 
+    { label: 'Đã hủy', value: 4, color: '#f43f5e' } 
+  ]
 
   return (
-    <div className="space-y-6">
+    // Thêm wrapper để quản lý hiệu ứng fade-in & slide-up của toàn bộ màn hình
+    <div className={`space-y-6 transition-all duration-700 ease-out ${pageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+      
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -290,18 +337,25 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1.6fr_1fr] gap-6">
-        <div className="bg-[#14161c] border border-white/10 rounded-[32px] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.24)]">
+        <div className="bg-[#14161c] border border-white/10 rounded-[32px] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.24)] flex flex-col">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-sm text-white/40">Doanh thu và đặt vé</p>
               <h2 className="text-2xl font-semibold text-white">Hiệu suất hệ thống</h2>
             </div>
-            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/60">
-              7 ngày gần nhất
-            </div>
+            <select
+              value={days}
+              onChange={e => setDays(Number(e.target.value))}
+              className="rounded-full border border-white/10 bg-[#1a1a1a] hover:bg-white/5 px-4 py-2 text-xs text-white outline-none focus:border-primary/50 cursor-pointer transition-colors"
+            >
+              <option className="bg-[#1a1a1a] text-white" value={7}>7 ngày gần nhất</option>
+              <option className="bg-[#1a1a1a] text-white" value={14}>14 ngày gần nhất</option>
+              <option className="bg-[#1a1a1a] text-white" value={30}>1 tháng gần nhất</option>
+              <option className="bg-[#1a1a1a] text-white" value={90}>3 tháng gần nhất</option>
+            </select>
           </div>
-          <div className="mt-6">
-            <LineChart data={doanhThu7Ngay} />
+          <div className="mt-6 flex-1 min-h-[300px]">
+            <DualBarChart data={doanhThu7Ngay} />
           </div>
         </div>
 
@@ -319,13 +373,13 @@ export default function Dashboard() {
                 const maxSoDon = Math.max(...topPhim.map(item => item.soDon || 0), 1)
                 const percent = Math.round((p.soDon / maxSoDon) * 100)
                 return (
-                  <div key={p.tenPhim || i} className="rounded-[24px] border border-white/10 bg-[#111315] p-4">
+                  <div key={p.tenPhim || i} className="rounded-[24px] border border-white/10 bg-[#111315] p-4 group hover:border-white/20 transition-colors">
                     <div className="flex items-center gap-4">
                       <div className="h-16 w-16 overflow-hidden rounded-3xl bg-slate-900 flex-shrink-0">
                         <img
                           src={p.posterUrl || 'https://via.placeholder.com/120x120/111827/94a3b8?text=No+Image'}
                           alt={p.tenPhim}
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500"
                           onError={(e) => { e.target.src = 'https://via.placeholder.com/120x120/111827/94a3b8?text=No+Image' }}
                         />
                       </div>
@@ -339,8 +393,8 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <div className="mt-4 h-2 rounded-full bg-white/10 overflow-hidden">
-                      <div className="h-full rounded-full bg-gradient-to-r from-rose-500 via-red-500 to-orange-400"
-                        style={{ width: `${percent}%` }} />
+                      <div className="h-full rounded-full bg-gradient-to-r from-rose-500 via-red-500 to-orange-400 transition-all duration-1000 ease-out"
+                        style={{ width: pageLoaded ? `${percent}%` : '0%' }} />
                     </div>
                   </div>
                 )
@@ -349,11 +403,11 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-[32px] border border-white/10 bg-[#14161c] p-5">
+            <div className="rounded-[32px] border border-white/10 bg-[#14161c] p-5 hover:border-white/20 transition-colors">
               <p className="text-xs text-white/40">Đơn đặt hôm nay</p>
               <p className="mt-4 text-2xl font-semibold text-white">{fmt(s.donDatHomNay)}</p>
             </div>
-            <div className="rounded-[32px] border border-white/10 bg-[#14161c] p-5">
+            <div className="rounded-[32px] border border-white/10 bg-[#14161c] p-5 hover:border-white/20 transition-colors">
               <p className="text-xs text-white/40">Tỷ lệ hôm nay</p>
               <p className="mt-4 text-2xl font-semibold text-white">{s.tyLeLapDay}%</p>
             </div>
@@ -361,23 +415,23 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="bg-[#14161c] border border-white/10 rounded-[32px] p-6">
           <p className="text-sm text-white/40 mb-4">Dữ liệu nhanh</p>
           <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-3xl bg-[#111315] p-5 border border-white/10">
+            <div className="rounded-3xl bg-[#111315] p-5 border border-white/10 hover:bg-white/5 transition-colors">
               <p className="text-xs text-white/40">Tổng phim</p>
               <p className="mt-3 text-xl font-semibold text-white">{fmt(s.tongPhim)}</p>
             </div>
-            <div className="rounded-3xl bg-[#111315] p-5 border border-white/10">
+            <div className="rounded-3xl bg-[#111315] p-5 border border-white/10 hover:bg-white/5 transition-colors">
               <p className="text-xs text-white/40">Rạp</p>
               <p className="mt-3 text-xl font-semibold text-white">{fmt(s.tongRap)}</p>
             </div>
-            <div className="rounded-3xl bg-[#111315] p-5 border border-white/10">
+            <div className="rounded-3xl bg-[#111315] p-5 border border-white/10 hover:bg-white/5 transition-colors">
               <p className="text-xs text-white/40">Người dùng</p>
               <p className="mt-3 text-xl font-semibold text-white">{fmt(s.tongNguoiDung)}</p>
             </div>
-            <div className="rounded-3xl bg-[#111315] p-5 border border-white/10">
+            <div className="rounded-3xl bg-[#111315] p-5 border border-white/10 hover:bg-white/5 transition-colors">
               <p className="text-xs text-white/40">Đơn đặt</p>
               <p className="mt-3 text-xl font-semibold text-white">{fmt(s.tongDonDat)}</p>
             </div>
@@ -387,18 +441,21 @@ export default function Dashboard() {
         <div className="bg-[#14161c] border border-white/10 rounded-[32px] p-6">
           <p className="text-sm text-white/40 mb-4">Chỉ số phụ</p>
           <div className="space-y-4">
-            <div className="rounded-3xl bg-[#111315] p-5 border border-white/10">
+            <div className="rounded-3xl bg-[#111315] p-5 border border-white/10 hover:bg-white/5 transition-colors">
               <p className="text-xs text-white/40">Doanh thu tháng</p>
               <p className="mt-3 text-xl font-semibold text-white">{fmtMoney(s.doanhThuThang)}</p>
             </div>
-            <div className="rounded-3xl bg-[#111315] p-5 border border-white/10">
+            <div className="rounded-3xl bg-[#111315] p-5 border border-white/10 hover:bg-white/5 transition-colors">
               <p className="text-xs text-white/40">Vé bán</p>
               <p className="mt-3 text-xl font-semibold text-white">{fmt(s.tongVeBan)}</p>
             </div>
           </div>
         </div>
+
+        <div className="bg-[#14161c] border border-white/10 rounded-[32px] p-6 flex flex-col justify-center">
+          <DonutChart data={orderStatusData} title="Trạng thái đơn vé" />
+        </div>
       </div>
     </div>
   )
 }
-

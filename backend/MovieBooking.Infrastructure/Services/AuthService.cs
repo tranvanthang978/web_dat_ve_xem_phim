@@ -144,6 +144,7 @@ namespace MovieBooking.Infrastructure.Services
                 return (false, "Người dùng không tồn tại");
 
             nguoiDung.MatKhauHash = _passwordHasher.HashPassword(matKhauMoi);
+            nguoiDung.TokenVersion++;
             _unitOfWork.NguoiDungs.Update(nguoiDung);
             await _unitOfWork.SaveChangesAsync();
 
@@ -170,6 +171,7 @@ namespace MovieBooking.Infrastructure.Services
                 new Claim(JwtRegisteredClaimNames.Email, nguoiDung.Email),
                 new Claim(ClaimTypes.Name, nguoiDung.HoTen),
                 new Claim(ClaimTypes.Role, nguoiDung.VaiTro),
+                new Claim("TokenVersion", nguoiDung.TokenVersion.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
