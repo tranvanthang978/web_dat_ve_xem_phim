@@ -153,31 +153,36 @@ namespace MovieBooking.Infrastructure.Services
             return (true, "Đặt lại mật khẩu thành công");
         }
 
-        public async Task<(bool Success, string Message, AuthResponseDto? Data)> GoogleLoginAsync(string credential)
+        public async Task<(bool Success, string Message, AuthResponseDto? Data)> GoogleLoginAsync(string accessToken)
         {
             try
             {
-                var googleClientId = _configuration["GoogleAuth:ClientId"]
-                    ?? throw new InvalidOperationException("Google ClientId not configured");
+                // Gọi Google UserInfo API bằng access_token
+                using var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
-                var settings = new GoogleJsonWebSignature.ValidationSettings
-                {
-                    Audience = new[] { googleClientId }
-                };
+                var response = await httpClient.GetAsync("https://www.googleapis.com/oauth2/v3/userinfo");
+                if (!response.IsSuccessStatusCode)
+                    return (false, "Token Google không hợp lệ hoặc đã hết hạn", null);
 
-                var payload = await GoogleJsonWebSignature.ValidateAsync(credential, settings);
+                var json = await response.Content.ReadAsStringAsync();
+                var googleUser = System.Text.Json.JsonSerializer.Deserialize<GoogleUserInfo>(json);
+
+                if (googleUser == null || string.IsNullOrEmpty(googleUser.Email))
+                    return (false, "Không thể lấy thông tin từ Google", null);
 
                 // Tìm user theo email
-                var nguoiDung = await _unitOfWork.NguoiDungs.FirstOrDefaultAsync(u => u.Email == payload.Email);
+                var nguoiDung = await _unitOfWork.NguoiDungs.FirstOrDefaultAsync(u => u.Email == googleUser.Email);
 
                 if (nguoiDung == null)
                 {
                     // Tự động tạo tài khoản mới cho user Google
                     nguoiDung = new NguoiDung
                     {
-                        HoTen = payload.Name ?? payload.Email,
-                        Email = payload.Email,
-                        TenDangNhap = payload.Email, // Dùng email làm tên đăng nhập
+                        HoTen = googleUser.Name ?? googleUser.Email,
+                        Email = googleUser.Email,
+                        TenDangNhap = googleUser.Email, // Dùng email làm tên đăng nhập
                         MatKhauHash = _passwordHasher.HashPassword(Guid.NewGuid().ToString()), // Mật khẩu ngẫu nhiên
                         VaiTro = UserRole.KhachHang.ToString(),
                         SoDienThoai = string.Empty
@@ -188,7 +193,7 @@ namespace MovieBooking.Infrastructure.Services
                 }
 
                 var token = GenerateJwtToken(nguoiDung);
-                var response = new AuthResponseDto
+                var authResponse = new AuthResponseDto
                 {
                     UserId = nguoiDung.Id,
                     HoTen = nguoiDung.HoTen,
@@ -198,16 +203,28 @@ namespace MovieBooking.Infrastructure.Services
                     Token = token
                 };
 
-                return (true, "Đăng nhập Google thành công", response);
-            }
-            catch (InvalidJwtException)
-            {
-                return (false, "Token Google không hợp lệ", null);
+                return (true, "Đăng nhập Google thành công", authResponse);
             }
             catch (Exception ex)
             {
                 return (false, $"Lỗi xác thực Google: {ex.Message}", null);
             }
+        }
+
+        // DTO nội bộ để deserialize response từ Google UserInfo API
+        private class GoogleUserInfo
+        {
+            [System.Text.Json.Serialization.JsonPropertyName("sub")]
+            public string? Sub { get; set; }
+
+            [System.Text.Json.Serialization.JsonPropertyName("name")]
+            public string? Name { get; set; }
+
+            [System.Text.Json.Serialization.JsonPropertyName("email")]
+            public string? Email { get; set; }
+
+            [System.Text.Json.Serialization.JsonPropertyName("picture")]
+            public string? Picture { get; set; }
         }
 
         private string GenerateJwtToken(NguoiDung nguoiDung)
