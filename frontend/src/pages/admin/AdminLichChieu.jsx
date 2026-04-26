@@ -299,7 +299,7 @@ export default function AdminLichChieu() {
                 <p className="text-sm text-white/40 mb-6">Hành động này không thể hoàn tác.</p>
                 <div className="flex gap-3">
                   <button onClick={() => setDeleteId(null)} className="flex-1 btn-outline text-sm py-2.5">Hủy</button>
-                  <button onClick={handleDelete} className="flex-1 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">Xóa</button>
+                  <button onClick={handleDelete} className="flex-1 btn-primary text-sm py-2.5 bg-red-500 hover:bg-red-600">Xóa</button>
                 </div>
               </>
             )}

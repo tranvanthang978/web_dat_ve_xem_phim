@@ -282,7 +282,7 @@ export default function AdminPhim() {
                   <button onClick={() => { setDeleteId(null); setDeleteError('') }}
                     className="flex-1 btn-outline text-sm py-2.5">Hủy</button>
                   <button onClick={handleDelete}
-                    className="flex-1 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">Xóa</button>
+                    className="flex-1 btn-primary text-sm py-2.5 bg-red-500 hover:bg-red-600">Xóa</button>
                 </div>
               </>
             )}

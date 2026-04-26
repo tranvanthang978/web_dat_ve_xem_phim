@@ -26,10 +26,6 @@ export default function AdminRap() {
   const [deletePhongId, setDeletePhongId] = useState(null)
   const [deletePhongError, setDeletePhongError] = useState('')
   const [detail, setDetail] = useState(null)
-  const [seedModal, setSeedModal] = useState(null) // { phongId, tenPhong }
-  const [seedForm, setSeedForm] = useState({ soHangGhe: 8, soGheMotHang: 10 })
-  const [seedLoading, setSeedLoading] = useState(false)
-  const [seedError, setSeedError] = useState('')
 
   const loadRaps = () => {
     setLoading(true)
@@ -74,8 +70,13 @@ export default function AdminRap() {
 
   const handleDeleteRap = async () => {
     if (!deleteRapId) return
-    try { await adminService.deleteRap(deleteRapId); loadRaps(); if (selectedRap?.id === deleteRapId) setSelectedRap(null) }
-    catch {}
+    try {
+      await adminService.deleteRap(deleteRapId)
+      loadRaps()
+      if (selectedRap?.id === deleteRapId) setSelectedRap(null)
+    } catch (err) {
+      console.error('Xóa rạp thất bại:', err)
+    }
     setDeleteRapId(null)
   }
 
@@ -397,7 +398,7 @@ function ConfirmDelete({ onConfirm, onCancel, label, error }) {
             <p className="text-sm text-white/40 mb-6">Hành động này không thể hoàn tác.</p>
             <div className="flex gap-3">
               <button onClick={onCancel} className="flex-1 btn-outline text-sm py-2.5">Hủy</button>
-              <button onClick={onConfirm} className="flex-1 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">Xóa</button>
+              <button onClick={onConfirm} className="flex-1 btn-primary text-sm py-2.5 bg-red-500 hover:bg-red-600">Xóa</button>
             </div>
           </>
         )}
