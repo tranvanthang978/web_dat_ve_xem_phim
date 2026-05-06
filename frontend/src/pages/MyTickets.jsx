@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import bookingService from '../services/bookingService'
+import Toast from '../components/Toast'
 
 const fmtMoney = (n) => new Intl.NumberFormat('vi-VN').format(Math.round(n)) + 'đ'
 const fmtDate  = (s) => new Date(s).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -24,6 +25,12 @@ export default function MyTickets() {
   const [filter, setFilter]     = useState('all')
   const [expanded, setExpanded] = useState(null)
   const [cancelling, setCancelling] = useState(null)
+  const [toast, setToast] = useState(null)
+
+  const showToast = (type, text) => {
+    setToast({ type, text })
+    setTimeout(() => setToast(null), 3000)
+  }
 
   useEffect(() => {
     if (!user?.userId) return
@@ -39,8 +46,9 @@ export default function MyTickets() {
     try {
       await bookingService.cancel(id)
       setTickets(prev => prev.map(t => t.id === id ? { ...t, trangThai: 'Cancelled' } : t))
+      showToast('ok', 'Hủy vé thành công')
     } catch {
-      alert('Không thể hủy vé. Vui lòng thử lại.')
+      showToast('err', 'Không thể hủy vé. Vui lòng thử lại.')
     } finally {
       setCancelling(null)
     }
@@ -78,6 +86,11 @@ export default function MyTickets() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+        {toast && (
+          <div className="mb-5">
+            <Toast type={toast.type} message={toast.text} />
+          </div>
+        )}
         {/* Filter tabs */}
         <div className="flex gap-2 mb-6 flex-wrap">
           {[

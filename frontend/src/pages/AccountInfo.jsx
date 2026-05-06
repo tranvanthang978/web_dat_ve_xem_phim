@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../services/api'
 import bookingService from '../services/bookingService'
+import Toast from '../components/Toast'
 
 export default function AccountInfo() {
   const { user, logout, login } = useAuth()
@@ -71,8 +72,12 @@ export default function AccountInfo() {
     try {
       await bookingService.cancel(id)
       setTickets(prev => prev.map(t => t.id === id ? { ...t, trangThai: 'Cancelled' } : t))
-    } catch { alert('Không thể hủy vé.') }
-    finally { setCancelling(null) }
+      showMsg('ok', 'Hủy vé thành công')
+    } catch {
+      showMsg('err', 'Không thể hủy vé. Vui lòng thử lại.')
+    } finally {
+      setCancelling(null)
+    }
   }
 
   const fmtMoney = (n) => new Intl.NumberFormat('vi-VN').format(Math.round(n)) + 'đ'
@@ -193,16 +198,8 @@ export default function AccountInfo() {
               <div className="p-6">
                 {/* Message */}
                 {msg && (
-                  <div className={`mb-5 flex items-center gap-2 text-sm px-4 py-3 rounded-xl border ${
-                    msg.type === 'ok'
-                      ? 'bg-green-500/10 text-green-400 border-green-500/20'
-                      : 'bg-red-500/10 text-red-400 border-red-500/20'
-                  }`}>
-                    {msg.type === 'ok'
-                      ? <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                      : <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    }
-                    {msg.text}
+                  <div className="mb-5">
+                    <Toast type={msg.type} message={msg.text} />
                   </div>
                 )}
 

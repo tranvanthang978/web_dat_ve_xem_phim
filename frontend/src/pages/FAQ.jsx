@@ -13,8 +13,8 @@ export default function FAQ() {
       a: "Bạn vui lòng kiểm tra hộp thư rác (Spam/Junk). Nếu vẫn không nhận được trong vòng 10 phút, bạn có thể vào phần 'Vé của tôi' trên website để lấy trực tiếp mã vé hoặc liên hệ Hotline."
     },
     {
-      q: "Làm thế nào để áp dụng mã khuyến mãi?",
-      a: "Tại trang Tóm tắt Đơn đặt vé (trước khi thanh toán), bạn sẽ thấy ô nhập Mã khuyến mãi. Nhập mã và bấm Áp dụng, hệ thống sẽ tự động trừ đi số phần trăm hoặc số tiền tương ứng tùy theo ưu đãi."
+      q: "Làm thế nào để áp dụng mã khuyến mại?",
+      a: "Tại trang Tóm tắt Đơn đặt vé (trước khi thanh toán), bạn sẽ thấy ô nhập Mã khuyến mại. Nhập mã và bấm Áp dụng, hệ thống sẽ tự động trừ đi số phần trăm hoặc số tiền tương ứng tùy theo ưu đãi."
     },
     {
       q: "Vé trẻ em được áp dụng cho độ tuổi nào?",

@@ -1,4 +1,14 @@
+import { useState } from 'react'
+import Toast from '../components/Toast'
+
 export default function Contact() {
+  const [toast, setToast] = useState(null)
+
+  const showToast = (type, text) => {
+    setToast({ type, text })
+    setTimeout(() => setToast(null), 3000)
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 md:py-20 text-white min-h-[70vh]">
       <h1 className="text-3xl font-bold mb-8 flex items-center gap-3">
@@ -8,6 +18,11 @@ export default function Contact() {
 
       <div className="grid md:grid-cols-2 gap-12">
         <div className="space-y-6">
+          {toast && (
+            <div>
+              <Toast type={toast.type} message={toast.text} />
+            </div>
+          )}
           <p className="text-white/70 leading-relaxed text-sm">
             Nếu bạn có bất kỳ câu hỏi nào về dịch vụ đặt vé, rạp chiếu phim hoặc tài khoản của bạn, xin đừng ngần ngại liên hệ với bộ phận CSKH của TTA Movie.
           </p>
@@ -60,7 +75,7 @@ export default function Contact() {
               <label className="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">Tin nhắn</label>
               <textarea rows="4" className="w-full bg-[#111] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-white/20 focus:border-primary focus:outline-none transition-colors resize-none" placeholder="Nhập nội dung cần hỗ trợ..."></textarea>
             </div>
-            <button type="button" className="w-full btn-primary py-3 flex items-center justify-center gap-2 mt-4" onClick={(e) => { e.preventDefault(); alert('Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất.')}}>
+            <button type="button" className="w-full btn-primary py-3 flex items-center justify-center gap-2 mt-4" onClick={(e) => { e.preventDefault(); showToast('ok', 'Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất.') }}>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
               Gửi Tin Nhắn
             </button>

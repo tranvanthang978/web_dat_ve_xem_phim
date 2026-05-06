@@ -5,7 +5,7 @@ const SUGGESTIONS = [
   'Phim nào đang chiếu?',
   'Phim hành động hay nhất?',
   'Còn ghế trống không?',
-  'Có khuyến mãi gì không?',
+  'Có khuyến mại gì không?',
 ]
 
 function TypingDots() {
@@ -59,6 +59,14 @@ export default function ChatBox() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
+
+  // Auto-grow textarea để hiển thị đầy đủ nội dung
+  useEffect(() => {
+    const textarea = inputRef.current
+    if (!textarea) return
+    textarea.style.height = 'auto'
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 160)}px`
+  }, [input])
 
   // Focus input khi mở
   useEffect(() => {
@@ -191,7 +199,7 @@ export default function ChatBox() {
               onKeyDown={handleKey}
               placeholder="Nhập câu hỏi..."
               rows={1}
-              className="flex-1 bg-transparent text-white text-sm placeholder-white/30 resize-none outline-none leading-relaxed max-h-24"
+              className="flex-1 bg-transparent text-white text-sm placeholder-white/30 resize-none outline-none leading-relaxed max-h-40 overflow-y-auto"
               style={{ scrollbarWidth: 'none' }}
             />
             <button

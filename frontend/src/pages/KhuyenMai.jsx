@@ -52,7 +52,7 @@ export default function KhuyenMai() {
             </svg>
             Ưu đãi đặc biệt
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-white mb-3">Khuyến mãi</h1>
+          <h1 className="text-3xl sm:text-4xl font-black text-white mb-3">Khuyến mại</h1>
           <p className="text-white/50 text-sm max-w-md mx-auto">
             Sao chép mã và nhập khi thanh toán để nhận ưu đãi
           </p>
@@ -67,7 +67,7 @@ export default function KhuyenMai() {
         ) : active.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-5xl mb-4">🎟️</div>
-            <p className="text-white/40 text-sm">Hiện chưa có khuyến mãi nào đang hoạt động</p>
+            <p className="text-white/40 text-sm">Hiện chưa có khuyến mại nào đang hoạt động</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -166,11 +166,11 @@ export default function KhuyenMai() {
 
         {/* Hướng dẫn sử dụng */}
         <div className="mt-12 bg-[#111] border border-white/5 rounded-2xl p-6">
-          <h2 className="text-sm font-bold text-white mb-4">Cách sử dụng mã khuyến mãi</h2>
+          <h2 className="text-sm font-bold text-white mb-4">Cách sử dụng mã khuyến mại</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
               { step: '1', icon: '🎬', title: 'Chọn phim & ghế', desc: 'Chọn phim, suất chiếu và ghế ngồi bạn muốn' },
-              { step: '2', icon: '🎟️', title: 'Nhập mã', desc: 'Tại bước thanh toán, nhập mã khuyến mãi vào ô "Mã khuyến mãi"' },
+              { step: '2', icon: '🎟️', title: 'Nhập mã', desc: 'Tại bước thanh toán, nhập mã khuyến mại vào ô "Mã khuyến mại"' },
               { step: '3', icon: '✅', title: 'Thanh toán', desc: 'Xác nhận và hoàn tất thanh toán với giá đã giảm' },
             ].map(item => (
               <div key={item.step} className="flex items-start gap-3">

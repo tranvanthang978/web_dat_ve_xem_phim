@@ -1,343 +1,202 @@
-# 🎬 MovieBooking - Hệ thống đặt vé xem phim trực tuyến
+﻿# MovieBooking_tta
 
-Ứng dụng web đặt vé xem phim full-stack với backend ASP.NET Core 8 và frontend React 19.
+## 1. Tổng quan dự án
 
----
+`MovieBooking_tta` là hệ thống đặt vé xem phim gồm:
+- Backend ASP.NET Core Web API xử lý nghiệp vụ, xác thực, thanh toán và quản trị.
+- Frontend React + Vite hiển thị giao diện người dùng, hỗ trợ đặt vé, xem lịch chiếu, đăng nhập và quản lý.
 
-## ✨ Tính năng
+Dự án mô phỏng một ứng dụng đặt vé rạp phim đầy đủ tính năng cho bài bảo vệ đồ án.
 
-### Người dùng
-- Đăng ký / Đăng nhập (JWT Authentication)
-- Xem danh sách phim đang chiếu
-- Xem chi tiết phim, lịch chiếu, sơ đồ ghế
-- Đặt vé (chọn nhiều ghế)
-- Thanh toán qua **VNPay** hoặc **chuyển khoản ngân hàng**
-- Xem lịch sử đặt vé, hủy vé
-- Chat hỗ trợ với AI (Google Gemini)
+## 2. Công nghệ chính
 
-### Admin
-- Quản lý phim (CRUD)
-- Quản lý rạp, phòng chiếu, ghế
-- Quản lý lịch chiếu
-- Quản lý khuyến mãi
-- Quản lý người dùng
-- Xuất báo cáo Excel
+Backend:
+- `.NET 8` / `ASP.NET Core`
+- `Entity Framework Core` với SQL Server
+- `JWT Bearer Authentication`
+- `FluentValidation`
+- `AutoMapper`
+- `Swagger` cho tài liệu API
 
----
+Frontend:
+- `React 19`
+- `Vite`
+- `Tailwind CSS`
+- `Axios`
+- `React Router DOM`
+- `@react-oauth/google` cho đăng nhập Google
 
-## 🛠 Tech Stack
-
-### Backend
-| Công nghệ | Phiên bản |
-|-----------|-----------|
-| .NET / ASP.NET Core | 8.0 |
-| Entity Framework Core | 8.0.23 |
-| SQL Server | - |
-| JWT Bearer Authentication | 8.0.23 |
-| AutoMapper | 13.0.1 |
-| FluentValidation | 11.9.0 |
-| Swagger / OpenAPI | 6.6.2 |
-| MailKit (Email) | 4.15.1 |
-| ClosedXML (Excel) | 0.105.0 |
-
-### Frontend
-| Công nghệ | Phiên bản |
-|-----------|-----------|
-| React | 19.2.4 |
-| Vite | 8.0.0 |
-| React Router DOM | 7.13.1 |
-| Axios | 1.13.6 |
-| Tailwind CSS | 3.4.19 |
-
-### Tích hợp bên thứ ba
-- **VNPay** — Cổng thanh toán trực tuyến
-- **Google Gemini AI** — Chatbot hỗ trợ khách hàng
-- **Gmail SMTP** — Gửi email xác nhận đặt vé
-
----
-
-## 🏗 Kiến trúc
-
-Backend sử dụng **Clean Architecture** với 4 layer:
+## 3. Kiến trúc dự án
 
 ```
-┌─────────────────────────────────────┐
-│           MovieBooking.Api          │  ← Controllers, Middlewares, DI
-├─────────────────────────────────────┤
-│       MovieBooking.Application      │  ← DTOs, Interfaces, Validators, Mappings
-├─────────────────────────────────────┤
-│      MovieBooking.Infrastructure    │  ← Repositories, Services, DbContext
-├─────────────────────────────────────┤
-│         MovieBooking.Domain         │  ← Entities, Enums, Exceptions
-└─────────────────────────────────────┘
-```
-
----
-
-## 📁 Cấu trúc thư mục
-
-```
-MovieBooking/
+MovieBooking_tta/
 ├── backend/
-│   ├── MovieBooking.Api/
-│   │   ├── Controllers/             # API Controllers
-│   │   ├── Middlewares/             # Exception handling middleware
-│   │   ├── Extensions/
-│   │   ├── appsettings.json         
-│   │   └── appsettings.Example.json # Template cấu hình (không có secrets)
-│   ├── MovieBooking.Application/
-│   │   ├── DTOs/
-│   │   ├── Features/
-│   │   ├── Interfaces/
-│   │   ├── Mappings/
-│   │   └── Validators/
-│   ├── MovieBooking.Infrastructure/
-│   │   ├── Data/                    # DbContext
-│   │   ├── Migrations/
-│   │   ├── Repositories/
-│   │   └── Services/
-│   ├── MovieBooking.Domain/
-│   │   ├── Entities/
-│   │   ├── Enums/
-│   │   └── Exceptions/
-│   └── MovieBooking_tta.sln
+│   ├── MovieBooking.Api/           # API, controller, middleware, cấu hình
+│   ├── MovieBooking.Application/   # DTO, interface, validator, mapping
+│   ├── MovieBooking.Infrastructure/# DbContext, repository, dịch vụ, migration
+│   ├── MovieBooking.Domain/        # Entity, Enum, model cốt lõi
+│   └── MovieBooking_tta.sln        # Solution file chung
 └── frontend/
     ├── src/
-    │   ├── components/              # Reusable UI components
-    │   ├── pages/                   # Page components
-    │   ├── services/                # API service layer (Axios)
-    │   ├── context/                 # React Context (Auth)
-    │   └── assets/
-    ├── .env                         
-    ├── .env.example                 # Template biến môi trường
-    └── package.json
+    │   ├── components/            # Component React tái sử dụng
+    │   ├── pages/                 # Trang người dùng
+    │   ├── services/              # API client, business logic frontend
+    │   ├── context/               # React Context và state toàn cục
+    │   └── assets/                # CSS, hình ảnh, tài nguyên tĩnh
+    ├── package.json
+    ├── vite.config.js
+    └── index.html
 ```
+
+## 4. Các tính năng chính
+
+### Người dùng
+- Đăng ký, đăng nhập bằng email/mật khẩu
+- Đăng nhập Google OAuth
+- Khôi phục mật khẩu qua OTP
+- Xem danh sách phim và lịch chiếu
+- Chọn ghế, đặt vé và thanh toán
+- Xem lịch sử đơn đặt vé cá nhân
+- Hủy đơn đặt vé
+
+### Quản trị (Admin)
+- Xem thống kê: tổng phim, rạp, người dùng, doanh thu, đơn đặt
+- Thống kê top phim và doanh thu theo ngày
+- Xuất dữ liệu đơn đặt vé ra file CSV
+- Cập nhật trạng thái đơn đặt vé
+
+### Hỗ trợ nghiệp vụ
+- Thanh toán qua VNPay
+- Gửi email xác thực/khôi phục mật khẩu
+- Middleware bắt lỗi chung (`ExceptionHandlingMiddleware`)
+- Xử lý tự động huỷ đơn đặt vé quá hạn bằng `BackgroundService`
+- API chat trợ lý (chat AI) với service `GeminiChatService`
+
+## 5. Cấu trúc backend chi tiết
+
+### Thư mục backend
+- `MovieBooking.Api/`
+  - `Program.cs`: cấu hình dịch vụ, JWT, CORS, Swagger, middleware.
+  - `Controllers/`: `AuthController`, `BookingController`, `AdminController`, `PhimController`, `RapController`, `LichChieuController`, `KhuyenMaiController`, `PaymentController`, `ChatController`, `NguoiDungController`, v.v.
+  - `Middlewares/`: xử lý lỗi chung.
+  - `Services/`: background task và các service đặc thù.
+
+- `MovieBooking.Application/`
+  - `DTOs/`: các lớp dữ liệu gửi/nhận giữa client và API.
+  - `Interfaces/`: interface cho service, repository, unit of work.
+  - `Mappings/`: cấu hình AutoMapper.
+  - `Validators/`: FluentValidation cho kiểm tra dữ liệu.
+
+- `MovieBooking.Infrastructure/`
+  - `Data/`: `MovieBookingDbContext`, cấu hình EF Core.
+  - `Repositories/`: lớp truy cập dữ liệu chung và cụ thể.
+  - `Services/`: thực thi logic service, thanh toán VNPay, email.
+
+- `MovieBooking.Domain/`
+  - `Entities/`: định nghĩa bảng, mối quan hệ.
+  - `Enums/`: trạng thái đơn hàng, trạng thái phim, v.v.
+
+## 6. Cấu trúc frontend
+
+### Thư mục frontend
+- `src/components/`: component tái sử dụng.
+- `src/pages/`: các trang chính như Home, MovieDetail, Booking, Profile, Admin.
+- `src/services/`: cấu hình Axios, gọi API, login, booking.
+- `src/context/`: quản lý state chung như token, thông tin user.
+- `src/assets/`: chứa CSS, hình ảnh và các tài nguyên frontend.
+
+### Công nghệ UI
+- Tailwind CSS giúp xây dựng giao diện nhanh, responsive.
+- Vite chạy local server nhanh và hỗ trợ hot reload.
+- React Router dùng điều hướng giữa các trang.
+
+## 7. Các endpoint quan trọng
+
+### Auth
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/google-login`
+- `POST /api/auth/forgot-password`
+- `POST /api/auth/verify-otp`
+- `POST /api/auth/reset-password`
+
+### Booking
+- `POST /api/bookings` - tạo đơn đặt vé
+- `GET /api/bookings/{id}` - chi tiết đơn vé
+- `GET /api/bookings/user/{userId}` - đơn vé theo người dùng
+- `PUT /api/bookings/{id}/cancel` - hủy đơn đặt vé
+- `GET /api/bookings` - danh sách đơn đặt vé (Admin)
+
+### Quản trị
+- `GET /api/admin/thong-ke` - thống kê dữ liệu quản trị
+- `GET /api/admin/export/bookings` - xuất CSV đơn đặt vé
+- `PUT /api/admin/bookings/{id}/status` - cập nhật trạng thái đơn vé
+
+### Khác
+- `POST /api/chat` (hoặc tương tự) - chat AI trợ lý
+- API phim, lịch chiếu, rạp, khuyến mãi, người dùng, thanh toán theo các controller tương ứng
+
+## 8. Hướng dẫn chạy dự án
+
+### Backend
+1. Mở `backend/MovieBooking_tta.sln` bằng Visual Studio hoặc chạy trong terminal.
+2. Kiểm tra `backend/MovieBooking.Api/appsettings.json` và `appsettings.Development.json`:
+   - `ConnectionStrings:DefaultConnection` tới SQL Server.
+   - `JwtSettings`: `Issuer`, `Audience`, `Secret`.
+   - `Cors:AllowedOrigins`: thêm `http://localhost:5173` nếu frontend chạy Vite.
+3. Chạy migration hoặc tạo database nếu cần.
+4. Chạy API:
+   - Trong terminal: `cd backend/MovieBooking.Api` rồi `dotnet run`
+   - Hoặc chạy từ Visual Studio bằng IIS Express / Project.
+5. Mở Swagger (dev) tại `https://localhost:{port}/swagger` để kiểm tra API.
+
+### Frontend
+1. Mở terminal tại `frontend/`.
+2. Cài dependencies:
+   - `npm install`
+3. Chạy ứng dụng:
+   - `npm run dev`
+4. Mở trình duyệt theo đường dẫn Vite cung cấp (thường `http://localhost:5173`).
+
+## 9. Cấu hình môi trường cần nhớ
+
+Backend cần:
+- SQL Server connection string
+- JWT secret
+- VNPay thông tin nếu cài đặt thanh toán thật
+- Email SMTP nếu gửi email
+- CORS origin chính xác cho frontend
+
+Frontend cần:
+- URL API backend đúng
+- Client ID Google OAuth nếu dùng đăng nhập Google
+
+## 10. Những điểm quan trọng để ôn trước bảo vệ
+
+- Kiến trúc 3 lớp backend: API / Application / Infrastructure
+- Cách bảo mật token JWT và verify token version
+- Cách chia controller cho từng nghiệp vụ: auth, booking, admin, film, promotion
+- Cách frontend giao tiếp với backend qua Axios và React Router
+- Cách xử lý lỗi trung tâm bằng `ExceptionHandlingMiddleware`
+- Cơ chế tự động hủy đơn đặt vé quá hạn bằng `BackgroundService`
+- Tại sao dùng `FluentValidation`, `AutoMapper`, `UnitOfWork`
+- Luồng đặt vé: chọn phim -> chọn lịch chiếu -> chọn ghế -> tạo đơn -> thanh toán -> xác nhận
+- Luồng admin: xem báo cáo -> xuất CSV -> cập nhật trạng thái đơn hàng
+
+## 11. Gợi ý trả lời phỏng vấn
+
+- "Tại sao tách `MovieBooking.Application` và `MovieBooking.Infrastructure`?"
+  - Để tách phần định nghĩa nghiệp vụ (DTO, interface, validator) khỏi phần thực thi dữ liệu (DbContext, repository), giúp dễ bảo trì và test.
+
+- "Cơ chế bảo mật JWT trong dự án ra sao?"
+  - Dùng JWT Bearer, validate issuer/audience/lifetime/signing key. Token cũng kiểm tra `TokenVersion` để có thể invalid token khi user đăng xuất hoặc đổi mật khẩu.
+
+- "Backend xử lý lỗi như thế nào?"
+  - Dùng `ExceptionHandlingMiddleware` để bắt lỗi toàn cục và trả về response chuẩn, tránh leak thông tin nội bộ.
+
+- "Frontend và backend có tương tác thế nào?"
+  - Frontend gọi API bằng `Axios`, quản lý token trong context, gửi token qua header `Authorization: Bearer {token}`.
 
 ---
 
-## 💻 Yêu cầu hệ thống
-
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (Express hoặc Developer)
-- [Node.js](https://nodejs.org/) >= 18.x
-- [npm](https://www.npmjs.com/) >= 9.x
-
----
-
-## 🚀 Cài đặt & Chạy
-
-### 1. Clone repository
-
-```bash
-git clone https://github.com/<your-username>/<repo-name>.git
-cd <repo-name>
-```
-
-### 2. Cấu hình Backend
-
-**Tạo file `appsettings.json`** từ template:
-
-```bash
-cp backend/MovieBooking.Api/appsettings.Example.json backend/MovieBooking.Api/appsettings.json
-```
-
-Sau đó chỉnh sửa `appsettings.json` với thông tin của bạn (xem phần [Cấu hình môi trường](#-cấu-hình-môi-trường)).
-
-**Chạy database migrations:**
-
-```bash
-cd backend
-dotnet ef database update --project MovieBooking.Infrastructure --startup-project MovieBooking.Api
-```
-
-**Khởi động backend:**
-
-```bash
-dotnet run --project MovieBooking.Api
-```
-
-Backend chạy tại: `http://localhost:5265`  
-Swagger UI: `http://localhost:5265/swagger`
-
-### 3. Cấu hình Frontend
-
-**Tạo file `.env`** từ template:
-
-```bash
-cp frontend/.env.example frontend/.env
-```
-
-Chỉnh sửa `frontend/.env`:
-
-```env
-VITE_API_URL=http://localhost:5265/api
-```
-
-**Cài đặt dependencies và chạy:**
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Frontend chạy tại: `http://localhost:1607`
-
----
-
-## ⚙️ Cấu hình môi trường
-
-### Backend — `appsettings.json`
-
-Tạo file `appsettings.json` với cấu trúc sau (thay thế các giá trị `<...>`):
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=<YOUR_SERVER>;Database=MovieBookingDb;Trusted_Connection=True;TrustServerCertificate=True"
-  },
-  "JwtSettings": {
-    "Secret": "<YOUR_JWT_SECRET_MIN_32_CHARS>",
-    "Issuer": "TTAMovieApi",
-    "Audience": "TTAMovieClient",
-    "ExpiryMinutes": 1440
-  },
-  "VNPay": {
-    "TmnCode": "<YOUR_VNPAY_TMN_CODE>",
-    "HashSecret": "<YOUR_VNPAY_HASH_SECRET>",
-    "BaseUrl": "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
-    "ReturnUrl": "http://localhost:5265/api/payment/vnpay/callback",
-    "Version": "2.1.0",
-    "Command": "pay",
-    "CurrCode": "VND",
-    "Locale": "vn"
-  },
-  "Cors": {
-    "AllowedOrigins": [
-      "http://localhost:1607",
-      "http://localhost:5173",
-      "http://localhost:3000"
-    ]
-  },
-  "Frontend": {
-    "BaseUrl": "http://localhost:1607"
-  },
-  "Email": {
-    "SmtpHost": "smtp.gmail.com",
-    "SmtpPort": 587,
-    "EnableSsl": true,
-    "SenderEmail": "<YOUR_GMAIL>",
-    "SenderName": "TTA Movie",
-    "Password": "<YOUR_GMAIL_APP_PASSWORD>"
-  },
-  "BankTransfer": {
-    "BankName": "<YOUR_BANK_NAME>",
-    "AccountNumber": "<YOUR_ACCOUNT_NUMBER>",
-    "AccountName": "<YOUR_ACCOUNT_NAME>",
-    "Template": "TTAVE{orderId}"
-  },
-  "AiSettings": {
-    "ApiKey": "<YOUR_GEMINI_API_KEY>",
-    "Endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*"
-}
-```
-
-> **Lưu ý Gmail App Password**: Vào Google Account → Security → 2-Step Verification → App passwords để tạo mật khẩu ứng dụng.
-
-### Frontend — `.env`
-
-```env
-VITE_API_URL=http://localhost:5265/api
-```
-
----
-
-## 📡 API Endpoints
-
-### Authentication
-| Method | Endpoint | Mô tả |
-|--------|----------|-------|
-| POST | `/api/auth/register` | Đăng ký tài khoản |
-| POST | `/api/auth/login` | Đăng nhập |
-
-### Phim
-| Method | Endpoint | Mô tả |
-|--------|----------|-------|
-| GET | `/api/phim` | Lấy tất cả phim |
-| GET | `/api/phim/{id}` | Lấy phim theo ID |
-| GET | `/api/phim/dang-chieu` | Lấy phim đang chiếu |
-| POST | `/api/phim` | Tạo phim mới (Admin) |
-| PUT | `/api/phim/{id}` | Cập nhật phim (Admin) |
-| DELETE | `/api/phim/{id}` | Xóa phim (Admin) |
-
-### Rạp & Phòng chiếu
-| Method | Endpoint | Mô tả |
-|--------|----------|-------|
-| GET | `/api/rap` | Lấy tất cả rạp |
-| GET | `/api/rap/{id}` | Lấy rạp theo ID |
-| GET | `/api/rap/{id}/phong-chieu` | Lấy phòng chiếu theo rạp |
-
-### Lịch chiếu
-| Method | Endpoint | Mô tả |
-|--------|----------|-------|
-| GET | `/api/lichchieu/{id}` | Lấy lịch chiếu theo ID |
-| GET | `/api/lichchieu/phim/{phimId}` | Lấy lịch chiếu theo phim |
-| GET | `/api/lichchieu/{id}/ghes` | Xem sơ đồ ghế & trạng thái |
-| POST | `/api/lichchieu` | Tạo lịch chiếu (Admin) |
-| DELETE | `/api/lichchieu/{id}` | Xóa lịch chiếu (Admin) |
-
-### Đặt vé
-| Method | Endpoint | Mô tả |
-|--------|----------|-------|
-| POST | `/api/booking` | Tạo đơn đặt vé |
-| GET | `/api/booking/{id}` | Lấy đơn đặt vé theo ID |
-| GET | `/api/booking/user/{userId}` | Lịch sử đặt vé của user |
-| PUT | `/api/booking/{id}/cancel` | Hủy đơn đặt vé |
-
-### Thanh toán
-| Method | Endpoint | Mô tả |
-|--------|----------|-------|
-| POST | `/api/payment/vnpay` | Tạo URL thanh toán VNPay |
-| GET | `/api/payment/vnpay/callback` | Callback từ VNPay |
-
-### Chat AI
-| Method | Endpoint | Mô tả |
-|--------|----------|-------|
-| POST | `/api/chat` | Gửi tin nhắn tới Gemini AI |
-
-> Xem đầy đủ tại Swagger UI: `http://localhost:5265/swagger`
-
----
-
-## 🗄 Database Schema
-
-```
-NguoiDung ──< DonDatVe ──< Ve >── Ghe >── PhongChieu >── Rap
-                  │                              │
-                  └──< ThanhToan      LichChieu >┘
-                                          │
-                                        Phim
-KhuyenMai (độc lập)
-```
-
----
-
-## 📸 Giao diện dự án
-#### Giao diện màn hình trang chủ
-<img width="1918" height="910" alt="image" src="https://github.com/user-attachments/assets/2250cfb3-28ee-404d-8dfd-d3ad6f043de0" />
-#### Giao diện màn hình chi tiết phim
-<img width="1919" height="911" alt="Screenshot 2026-04-19 212912" src="https://github.com/user-attachments/assets/55da062a-10f9-4eb5-9172-04e4725aee51" />
-#### Giao diện màn hình đặt vé thành công
-<img width="1919" height="911" alt="Screenshot 2026-04-19 213138" src="https://github.com/user-attachments/assets/d9569f25-51e4-48e0-937a-632c9eaabb41" />
-#### Giao diện màn hình Admin Dashboard
-<img width="1919" height="910" alt="Screenshot 2026-04-19 213021" src="https://github.com/user-attachments/assets/92497518-3ab2-4791-932e-4106db20d679" />
-
----
+> README này đã sắp xếp theo cấu trúc rõ ràng, giúp bạn ôn tập nhanh các phần quan trọng của đồ án khi chuẩn bị bảo vệ.

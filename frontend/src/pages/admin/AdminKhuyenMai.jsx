@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import adminService from '../../services/adminService'
 import Pagination from '../../components/Pagination'
+import Toast from '../../components/Toast'
 
 const fmtDate = (d) => new Date(d).toLocaleDateString('vi-VN')
 const fmtMoney = (n) => new Intl.NumberFormat('vi-VN').format(n) + '%'
@@ -19,6 +20,12 @@ export default function AdminKhuyenMai() {
   const pageSize = 10
   const [deleteId, setDeleteId] = useState(null)
   const [detail, setDetail] = useState(null)
+  const [toast, setToast] = useState(null)
+
+  const showToast = (type, text) => {
+    setToast({ type, text })
+    setTimeout(() => setToast(null), 3000)
+  }
 
   const load = () => {
     setLoading(true)
@@ -57,8 +64,10 @@ export default function AdminKhuyenMai() {
     try {
       if (modal.mode === 'create') {
         await adminService.createKhuyenMai(payload)
+        showToast('ok', 'Thêm khuyến mại thành công')
       } else {
         await adminService.updateKhuyenMai(modal.id, payload)
+        showToast('ok', 'Cập nhật khuyến mại thành công')
       }
       load(); closeModal()
     } catch (err) {
@@ -66,8 +75,11 @@ export default function AdminKhuyenMai() {
       if (d?.errors) {
         const msgs = Object.values(d.errors).flat().join(', ')
         setError(msgs)
+        showToast('err', msgs)
       } else {
-        setError(d?.message || `Lỗi ${err.response?.status || 'kết nối'}: Không thể lưu khuyến mại`)
+        const msg = d?.message || `Lỗi ${err.response?.status || 'kết nối'}: Không thể lưu khuyến mại`
+        setError(msg)
+        showToast('err', msg)
       }
     } finally {
       setSaving(false)
@@ -78,8 +90,13 @@ export default function AdminKhuyenMai() {
     if (!deleteId) return
     try {
       await adminService.deleteKhuyenMai(deleteId)
+      showToast('ok', 'Xóa khuyến mại thành công')
       load()
-    } catch (e) { console.error(e) }
+    } catch (e) {
+      const msg = e.response?.data?.message || 'Không thể xóa khuyến mại này'
+      console.error(e)
+      showToast('err', msg)
+    }
     setDeleteId(null)
   }
 
@@ -104,6 +121,8 @@ export default function AdminKhuyenMai() {
           Thêm khuyến mại
         </button>
       </div>
+
+      {toast && <Toast type={toast.type} message={toast.text} />}
 
       {/* Search */}
       <div className="relative w-72">
@@ -163,7 +182,7 @@ export default function AdminKhuyenMai() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right space-x-2">
-                    <button onClick={() => setDetail(k)} className="text-white/40 hover:text-blue-400 transition-colors p-1.5 rounded hover:bg-blue-400/5" title="Xem chi tiết">
+                    <button onClick={() => setDetail(k)} className="text-white/40 hover:text-blue-400 transition-colors p-1.5 rounded hover:bg-blue-400/10" title="Xem chi tiết">
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />

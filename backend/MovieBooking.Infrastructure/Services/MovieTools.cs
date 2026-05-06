@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using MovieBooking.Domain.Enums;
 using MovieBooking.Infrastructure.Data;
+using System.Globalization;
+using System.Text;
 
 namespace MovieBooking.Infrastructure.Services
 {
@@ -16,6 +18,22 @@ namespace MovieBooking.Infrastructure.Services
         {
             _context = context;
         }
+
+        private static string RemoveDiacritics(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return string.Empty;
+            var normalized = text.Normalize(NormalizationForm.FormD);
+            var builder = new StringBuilder();
+            foreach (var ch in normalized)
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(ch) != UnicodeCategory.NonSpacingMark)
+                    builder.Append(ch);
+            }
+            return builder.ToString().Normalize(NormalizationForm.FormC);
+        }
+
+        private static string NormalizeSearchText(string text) =>
+            RemoveDiacritics(text ?? string.Empty).ToLowerInvariant();
 
         /// <summary>Lấy danh sách phim đang chiếu</summary>
         public async Task<string> GetDangChieuAsync()
@@ -51,37 +69,44 @@ namespace MovieBooking.Infrastructure.Services
         public async Task<string> GetLichChieuAsync(string tenPhim)
         {
             var now = DateTime.Now;
+            var normalizedTenPhim = NormalizeSearchText(tenPhim);
+
             var lichChieus = await _context.LichChieus
                 .Include(l => l.Phim)
                 .Include(l => l.PhongChieu).ThenInclude(p => p.Rap)
-                .Where(l => EF.Functions.Like(l.Phim.TenPhim, $"%{tenPhim}%")
-                         && l.GioBatDau >= now)
+                .Where(l => l.GioBatDau >= now)
                 .OrderBy(l => l.GioBatDau)
-                .Take(10)
-                .Select(l => new
-                {
-                    l.Phim.TenPhim,
-                    Rap = l.PhongChieu.Rap.TenRap,
-                    Phong = l.PhongChieu.TenPhong,
-                    GioBatDau = l.GioBatDau,
-                    l.GiaCoBan
-                })
+                .Take(50)
                 .ToListAsync();
 
-            if (!lichChieus.Any())
+            var filtered = lichChieus
+                .Where(l => NormalizeSearchText(l.Phim.TenPhim).Contains(normalizedTenPhim))
+                .Take(10)
+                .ToList();
+
+            if (!filtered.Any())
                 return $"Không tìm thấy lịch chiếu nào cho phim '{tenPhim}' từ thời điểm hiện tại.";
 
-            var lines = lichChieus.Select(l =>
-                $"- {l.TenPhim} | {l.Rap} - {l.Phong} | {l.GioBatDau:HH:mm dd/MM/yyyy} | Giá: {l.GiaCoBan:N0}đ");
+            var lines = filtered.Select(l =>
+                $"- {l.Phim.TenPhim} | {l.PhongChieu.Rap.TenRap} - {l.PhongChieu.TenPhong} | {l.GioBatDau:HH:mm dd/MM/yyyy} | Giá: {l.GiaCoBan:N0}đ");
             return $"Lịch chiếu phim '{tenPhim}':\n" + string.Join("\n", lines);
         }
 
         /// <summary>Lấy thông tin chi tiết một bộ phim theo tên</summary>
         public async Task<string> GetThongTinPhimAsync(string tenPhim)
         {
+            var normalizedTenPhim = NormalizeSearchText(tenPhim);
+
             var phim = await _context.Phims
                 .Where(p => EF.Functions.Like(p.TenPhim, $"%{tenPhim}%"))
                 .FirstOrDefaultAsync();
+
+            if (phim == null)
+            {
+                phim = _context.Phims
+                    .AsEnumerable()
+                    .FirstOrDefault(p => NormalizeSearchText(p.TenPhim).Contains(normalizedTenPhim));
+            }
 
             if (phim == null) return $"Không tìm thấy phim '{tenPhim}'.";
 
@@ -126,20 +151,39 @@ namespace MovieBooking.Infrastructure.Services
             return "Khuyến mãi đang áp dụng:\n" + string.Join("\n", lines);
         }
 
+        /// <summary>Hướng dẫn người dùng quy trình đặt vé trên trang</summary>
+        public Task<string> GetQuyTrinhDatVeAsync()
+        {
+            var message =
+                "Quy trình đặt vé tại TTA Movie:\n" +
+                "1. Chọn phim và lịch chiếu trên trang danh sách phim.\n" +
+                "2. Chọn rạp, phòng chiếu và suất chiếu phù hợp.\n" +
+                "3. Chọn ghế còn trống trên sơ đồ ghế.\n" +
+                "4. Kiểm tra thông tin tóm tắt và tiến hành thanh toán.\n" +
+                "5. Nhận mã vé điện tử hoặc mã QR ngay sau khi thanh toán thành công.";
+
+            return Task.FromResult(message);
+        }
+
         /// <summary>Đếm số ghế trống còn lại của một suất chiếu (theo tên phim, hoặc theo lichChieuId)</summary>
         public async Task<string> GetGheTrongAsync(string tenPhim)
         {
             var now = DateTime.Now;
+            var normalizedTenPhim = NormalizeSearchText(tenPhim);
 
-            // Lấy các suất chiếu sắp tới của phim
             var lichChieus = await _context.LichChieus
                 .Include(l => l.Phim)
                 .Include(l => l.PhongChieu).ThenInclude(p => p.Rap)
                 .Include(l => l.PhongChieu).ThenInclude(p => p.Ghes)
-                .Where(l => EF.Functions.Like(l.Phim.TenPhim, $"%{tenPhim}%") && l.GioBatDau >= now)
+                .Where(l => l.GioBatDau >= now)
                 .OrderBy(l => l.GioBatDau)
-                .Take(5)
+                .Take(50)
                 .ToListAsync();
+
+            lichChieus = lichChieus
+                .Where(l => NormalizeSearchText(l.Phim.TenPhim).Contains(normalizedTenPhim))
+                .Take(5)
+                .ToList();
 
             if (!lichChieus.Any())
                 return $"Không tìm thấy suất chiếu nào cho phim '{tenPhim}'.";
@@ -169,13 +213,18 @@ namespace MovieBooking.Infrastructure.Services
         public async Task<string> GetGiaVeAsync(string tenPhim)
         {
             var now = DateTime.Now;
+            var normalizedTenPhim = NormalizeSearchText(tenPhim);
 
-            var lichChieu = await _context.LichChieus
+            var lichChieus = await _context.LichChieus
                 .Include(l => l.Phim)
                 .Include(l => l.PhongChieu).ThenInclude(p => p.Ghes)
-                .Where(l => EF.Functions.Like(l.Phim.TenPhim, $"%{tenPhim}%") && l.GioBatDau >= now)
+                .Where(l => l.GioBatDau >= now)
                 .OrderBy(l => l.GioBatDau)
-                .FirstOrDefaultAsync();
+                .Take(50)
+                .ToListAsync();
+
+            var lichChieu = lichChieus
+                .FirstOrDefault(l => NormalizeSearchText(l.Phim.TenPhim).Contains(normalizedTenPhim));
 
             if (lichChieu == null)
                 return $"Không tìm thấy suất chiếu nào cho phim '{tenPhim}'.";
@@ -242,6 +291,7 @@ namespace MovieBooking.Infrastructure.Services
                 "get_khuyen_mai"     => await GetKhuyenMaiAsync(),
                 "get_ghe_trong"      => await GetGheTrongAsync(args.GetValueOrDefault("ten_phim", "")),
                 "get_gia_ve"         => await GetGiaVeAsync(args.GetValueOrDefault("ten_phim", "")),
+                "get_quy_trinh_dat_ve" => await GetQuyTrinhDatVeAsync(),
                 "loc_phim"           => await LocPhimAsync(
                                             args.GetValueOrDefault("the_loai"),
                                             args.GetValueOrDefault("trang_thai"),
@@ -348,6 +398,11 @@ namespace MovieBooking.Infrastructure.Services
                             },
                             required = new[] { "ten_phim" }
                         }
+                    },
+                    new
+                    {
+                        name = "get_quy_trinh_dat_ve",
+                        description = "Hướng dẫn cách đặt vé và thanh toán trên hệ thống TTA Movie."
                     },
                     new
                     {

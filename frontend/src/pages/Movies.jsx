@@ -1,7 +1,13 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import MovieCard from '../components/MovieCard'
 import phimService from '../services/phimService'
+
+const normalizeText = (value = '') =>
+  value
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
 
 const GENRES = ['Tất cả', 'Hành động', 'Phiêu lưu', 'Kinh dị', 'Hoạt hình', 'Siêu anh hùng', 'Tình cảm', 'Hài']
 const RATINGS = ['Tất cả', '4.5+', '4.0+', '3.5+']
@@ -17,15 +23,25 @@ const capitalize = (str) => str.split(' ').map(word => word.charAt(0).toUpperCas
 const INITIAL_GENRES = ['Tất cả', 'Hành động', 'Tình cảm', 'Hài', 'Kinh dị', 'Hoạt hình']
 
 export default function Movies() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [allMovies, setAllMovies] = useState({ dangChieu: [], sapChieu: [] })
   const [tab, setTab] = useState('dang-chieu')
   const [genre, setGenre] = useState('Tất cả')
   const [rating, setRating] = useState('Tất cả')
   const [sort, setSort] = useState('default')
   const [page, setPage] = useState(1)
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState(searchParams.get('q') || '')
   const [loading, setLoading] = useState(true)
   const [showAllGenres, setShowAllGenres] = useState(false)
+
+  // Đồng bộ query param "q" từ URL khi navigate từ Navbar
+  useEffect(() => {
+    const q = searchParams.get('q') || ''
+    if (q !== search) {
+      setSearch(q)
+      setPage(1)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -74,8 +90,8 @@ export default function Movies() {
     let list = [...movies]
 
     if (search.trim()) {
-      const q = search.toLowerCase()
-      list = list.filter(m => m.tenPhim.toLowerCase().includes(q))
+      const q = normalizeText(search)
+      list = list.filter(m => normalizeText(m.tenPhim).includes(q))
     }
     if (genre !== 'Tất cả') {
       list = list.filter(m => {

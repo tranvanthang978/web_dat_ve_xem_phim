@@ -68,9 +68,9 @@ export default function Promotions() {
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            <span className="text-white">Khuyến mãi</span>
+            <span className="text-white">Khuyến mại</span>
           </div>
-          <h1 className="text-4xl font-black text-white mb-2">Khuyến mãi hấp dẫn</h1>
+          <h1 className="text-4xl font-black text-white mb-2">Khuyến mại hấp dẫn</h1>
           <p className="text-white/60">Khám phá những ưu đãi độc quyền tại TTA Movie</p>
         </div>
       </div>
@@ -136,7 +136,7 @@ export default function Promotions() {
 
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-white/40">Mã khuyến mãi:</span>
+                      <span className="text-white/40">Mã khuyến mại:</span>
                       <code className="bg-white/5 text-primary px-2 py-1 rounded font-mono text-xs font-bold">
                         {promo.code}
                       </code>
@@ -165,8 +165,8 @@ export default function Promotions() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {[
-              { q: 'Làm sao để sử dụng mã khuyến mãi?', a: 'Nhập mã khuyến mãi khi đặt vé. Mã sẽ được áp dụng tự động nếu hợp lệ.' },
-              { q: 'Mã khuyến mãi có thể kết hợp nhau không?', a: 'Không, chỉ có thể sử dụng 1 mã khuyến mãi cho 1 đơn hàng.' },
+              { q: 'Làm sao để sử dụng mã khuyến mại?', a: 'Nhập mã khuyến mại khi đặt vé. Mã sẽ được áp dụng tự động nếu hợp lệ.' },
+              { q: 'Mã khuyến mại có thể kết hợp nhau không?', a: 'Không, chỉ có thể sử dụng 1 mã khuyến mại cho 1 đơn hàng.' },
               { q: 'Điểm TTA Club hết hạn khi nào?', a: 'Điểm của bạn không bao giờ hết hạn nếu tài khoản vẫn đang hoạt động.' },
               { q: 'Làm sao nhận được hoàn tiền?', a: 'Hoàn tiền sẽ được cộng vào tài khoản TTA Club của bạn sau 24h.' },
             ].map((item, i) => (

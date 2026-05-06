@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import adminService from '../../services/adminService'
+import Toast from '../../components/Toast'
 
 const fmtDate = (d) => {
   if (!d) return '—'
@@ -23,6 +24,12 @@ export default function AdminLichChieu() {
   const [error, setError] = useState('')
   const [deleteId, setDeleteId] = useState(null)
   const [deleteError, setDeleteError] = useState('')
+  const [toast, setToast] = useState(null)
+
+  const showToast = (type, text) => {
+    setToast({ type, text })
+    setTimeout(() => setToast(null), 3000)
+  }
 
   useEffect(() => {
     // PhimController trả về array thẳng (không wrap ApiResponse)
@@ -100,6 +107,12 @@ export default function AdminLichChieu() {
     if (!form.phimId || !form.phongChieuId || !form.gioBatDau || !form.gioKetThuc) {
       setError('Vui lòng điền đầy đủ thông tin'); return
     }
+    // Validate thời gian
+    const start = new Date(form.gioBatDau)
+    const end = new Date(form.gioKetThuc)
+    if (end <= start) {
+      setError('Giờ kết thúc phải sau giờ bắt đầu'); return
+    }
     setSaving(true); setError('')
     const payload = {
       ...form,
@@ -115,7 +128,9 @@ export default function AdminLichChieu() {
       reloadLichChieu()
       setModal(false)
     } catch (err) {
-      setError(err.response?.data?.message || 'Có lỗi xảy ra')
+      const msg = err.response?.data?.message || 'Có lỗi xảy ra'
+      setError(msg)
+      showToast('err', msg)
     } finally { setSaving(false) }
   }
 
@@ -123,11 +138,14 @@ export default function AdminLichChieu() {
     if (!deleteId) return
     try {
       await adminService.deleteLichChieu(deleteId)
+      showToast('ok', 'Xóa lịch chiếu thành công')
       setLichChieus(prev => prev.filter(l => l.id !== deleteId))
       setDeleteId(null)
       setDeleteError('')
     } catch (err) {
-      setDeleteError(err.response?.data?.message || 'Không thể xóa lịch chiếu này')
+      const msg = err.response?.data?.message || 'Không thể xóa lịch chiếu này'
+      setDeleteError(msg)
+      showToast('err', msg)
     }
   }
 
@@ -145,6 +163,8 @@ export default function AdminLichChieu() {
           Thêm lịch chiếu
         </button>
       </div>
+
+      {toast && <Toast type={toast.type} message={toast.text} />}
 
       {/* Filter */}
       <div className="flex items-center gap-3">

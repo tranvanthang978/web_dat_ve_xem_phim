@@ -5,6 +5,7 @@ import phimService from '../services/phimService'
 import lichChieuService from '../services/lichChieuService'
 import api from '../services/api'
 import Loading from '../components/Loading'
+import Toast from '../components/Toast'
 import paymentService from '../services/paymentService'
 
 const fmtMoney = (n) => new Intl.NumberFormat('vi-VN').format(Math.round(n)) + 'đ'
@@ -114,6 +115,12 @@ export default function BookingPage() {
   const [bankModal, setBankModal] = useState(false)
   const [bankInfo, setBankInfo] = useState(null)
   const [confirming, setConfirming] = useState(false)
+  const [toast, setToast] = useState(null)
+
+  const showToast = (type, text) => {
+    setToast({ type, text })
+    setTimeout(() => setToast(null), 3000)
+  }
 
   const handleExpire = useCallback(() => setExpired(true), [])
 
@@ -245,7 +252,7 @@ export default function BookingPage() {
     setExpired(false)
   }
 
-  // Validate mã khuyến mãi
+  // Validate mã khuyến mại
   const handleValidateKM = async () => {
     if (!maKM.trim()) return
     setKmLoading(true); setKmError(''); setKmData(null)
@@ -313,7 +320,7 @@ export default function BookingPage() {
       setBankModal(false)
       setDone(true)
     } catch {
-      alert('Xác nhận thất bại, vui lòng thử lại.')
+      showToast('err', 'Xác nhận thất bại, vui lòng thử lại.')
     } finally {
       setConfirming(false)
     }
@@ -454,6 +461,12 @@ export default function BookingPage() {
               </div>
             </div>
 
+            {toast && (
+              <div className="mb-6">
+                <Toast type={toast.type} message={toast.text} />
+              </div>
+            )}
+
             {/* ---- STEP 1: Chọn ghế ---- */}
             {step === 1 && (
               <div className="space-y-5">
@@ -526,6 +539,11 @@ export default function BookingPage() {
                 </div>
 
                 {/* Lỗi ghế */}
+                {toast && (
+                  <div className="mb-4">
+                    <Toast type={toast.type} message={toast.text} />
+                  </div>
+                )}
                 {error && (
                   <p className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 text-center">
                     {error}
@@ -676,14 +694,14 @@ export default function BookingPage() {
 
                 {/* Mã giảm giá */}
                 <div className="bg-[#111] border border-white/5 rounded-xl p-5 space-y-3">
-                  <p className="text-xs font-bold text-white/60 uppercase tracking-wider">Mã khuyến mãi</p>
+                  <p className="text-xs font-bold text-white/60 uppercase tracking-wider">Mã khuyến mại</p>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={maKM}
                       onChange={e => { setMaKM(e.target.value.toUpperCase()); setKmError(''); setKmData(null) }}
                       onKeyDown={e => e.key === 'Enter' && handleValidateKM()}
-                      placeholder="Nhập mã khuyến mãi..."
+                      placeholder="Nhập mã khuyến mại..."
                       className="input-field text-sm flex-1 uppercase tracking-widest"
                     />
                     <button onClick={handleValidateKM} disabled={kmLoading || !maKM.trim()}

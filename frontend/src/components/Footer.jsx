@@ -22,7 +22,7 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-semibold text-white mb-4">Khám phá</h4>
             <ul className="space-y-2">
-              {[['Phim đang chiếu', '/phim'], ['Phim sắp chiếu', '/phim?tab=sap-chieu'], ['Rạp chiếu', '/rap'], ['Khuyến mãi', '/khuyen-mai']].map(([label, to]) => (
+              {[['Phim đang chiếu', '/phim'], ['Phim sắp chiếu', '/phim?tab=sap-chieu'], ['Rạp chiếu', '/rap'], ['Khuyến mại', '/khuyen-mai']].map(([label, to]) => (
                 <li key={to}>
                   <Link to={to} className="text-sm text-white/40 hover:text-white transition-colors">{label}</Link>
                 </li>

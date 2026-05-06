@@ -3,6 +3,12 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import phimService from '../services/phimService'
 
+const normalizeText = (value = '') =>
+  value
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+
 export default function Navbar() {
   const { user, logout, isLoggedIn } = useAuth()
   const navigate = useNavigate()
@@ -17,7 +23,7 @@ export default function Navbar() {
   const navLinks = [
     { to: '/', label: 'Trang chủ', end: true },
     { to: '/phim', label: 'Phim' },
-    { to: '/khuyen-mai', label: 'Khuyến mãi' },
+    { to: '/khuyen-mai', label: 'Khuyến mại' },
   ]
 
   // Fetch movies for search
@@ -29,10 +35,10 @@ export default function Navbar() {
 
   // filter
   useEffect(() => {
-    const q = searchQuery.trim().toLowerCase()
+    const q = normalizeText(searchQuery.trim())
     if (!q) { setSearchResults([]); return }
     const results = allMovies.filter(m =>
-      m.tenPhim?.toLowerCase().includes(q)
+      normalizeText(m.tenPhim).includes(q)
     ).slice(0, 5)
     setSearchResults(results)
   }, [searchQuery, allMovies])

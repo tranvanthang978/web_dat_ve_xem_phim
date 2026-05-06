@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import adminService from '../../services/adminService'
 import Pagination from '../../components/Pagination'
+import Toast from '../../components/Toast'
 
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('vi-VN') : '—'
 
@@ -15,12 +16,18 @@ export default function AdminNguoiDung() {
   const pageSize = 10
   const [deleteId, setDeleteId] = useState(null)
   const [deleteUser, setDeleteUser] = useState(null)
+  const [toast, setToast] = useState(null)
 
   // Modal sửa / xem chi tiết
   const [modal, setModal] = useState(null) // { mode: 'view'|'edit', user }
   const [editForm, setEditForm] = useState(EMPTY_EDIT)
   const [saving, setSaving] = useState(false)
   const [editError, setEditError] = useState('')
+
+  const showToast = (type, text) => {
+    setToast({ type, text })
+    setTimeout(() => setToast(null), 3000)
+  }
 
   const load = () => {
     setLoading(true)
@@ -55,8 +62,11 @@ export default function AdminNguoiDung() {
         u.id === modal.user.id ? { ...u, vaiTro: editForm.vaiTro } : u
       ))
       setModal(null)
+      showToast('ok', 'Cập nhật vai trò thành công')
     } catch (err) {
-      setEditError(err.response?.data?.message || 'Có lỗi xảy ra khi lưu')
+      const msg = err.response?.data?.message || 'Có lỗi xảy ra khi lưu'
+      setEditError(msg)
+      showToast('err', msg)
     } finally {
       setSaving(false)
     }
@@ -67,7 +77,12 @@ export default function AdminNguoiDung() {
     try {
       await adminService.deleteNguoiDung(deleteId)
       setUsers(prev => prev.filter(u => u.id !== deleteId))
-    } catch (e) { console.error(e) }
+      showToast('ok', 'Xóa người dùng thành công')
+    } catch (e) {
+      const msg = e.response?.data?.message || 'Không thể xóa người dùng này'
+      console.error(e)
+      showToast('err', msg)
+    }
     setDeleteId(null); setDeleteUser(null)
   }
 
@@ -93,6 +108,8 @@ export default function AdminNguoiDung() {
           <p className="text-sm text-white/40 mt-0.5">{users.length} tài khoản trong hệ thống</p>
         </div>
       </div>
+
+      {toast && <Toast type={toast.type} message={toast.text} />}
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
@@ -165,7 +182,7 @@ export default function AdminNguoiDung() {
                       {/* Xem chi tiết */}
                       <button
                         onClick={() => openView(u)}
-                        className="text-white/40 hover:text-blue-400 transition-colors p-1.5 rounded hover:bg-blue-400/5"
+                        className="text-white/40 hover:text-blue-400 transition-colors p-1.5 rounded hover:bg-blue-400/10"
                         title="Xem chi tiết"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
