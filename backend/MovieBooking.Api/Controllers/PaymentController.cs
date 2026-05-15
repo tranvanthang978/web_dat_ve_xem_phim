@@ -135,8 +135,26 @@ namespace MovieBooking.Api.Controllers
 
             return Ok(new { message = "Xác nhận thanh toán thành công" });
         }
+
+        [HttpPost("bank-transfer/cancel")]
+        [Authorize]
+        public async Task<IActionResult> CancelBankTransfer([FromBody] BankTransferCancelRequest request)
+        {
+            var don = await _dbContext.DonDatVes.FindAsync(request.DonDatVeId);
+            if (don == null) return NotFound(new { message = "Đơn không tồn tại" });
+            if (don.TrangThai != "Pending") return BadRequest(new { message = "Chỉ có thể hủy đơn đang chờ thanh toán" });
+
+            don.TrangThai   = "Cancelled";
+            don.NgayCapNhat = DateTime.Now;
+
+            _dbContext.DonDatVes.Update(don);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { message = "Hủy giao dịch và nhả ghế thành công" });
+        }
     }
 
     public record CreateVNPayRequest(int DonDatVeId);
     public record BankTransferConfirmRequest(int DonDatVeId);
+    public record BankTransferCancelRequest(int DonDatVeId);
 }

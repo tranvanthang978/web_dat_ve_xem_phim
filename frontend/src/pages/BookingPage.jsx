@@ -18,7 +18,7 @@ const fmtDateTime = (s) => {
 }
 
 const VIP_SURCHARGE = 20000
-const COUNTDOWN_SECONDS = 8 * 60 // 8 phút
+const COUNTDOWN_SECONDS = 5 * 60 // 5 phút
 
 const FOODS = [
   { id: 'bp-l',   emoji: '🍿', name: 'Bắp rang bơ lớn',   desc: 'Size L · ~120g',      price: 55000, tag: null },
@@ -115,6 +115,7 @@ export default function BookingPage() {
   const [bankModal, setBankModal] = useState(false)
   const [bankInfo, setBankInfo] = useState(null)
   const [confirming, setConfirming] = useState(false)
+  const [confirmCancelModal, setConfirmCancelModal] = useState(false)
   const [toast, setToast] = useState(null)
 
   const showToast = (type, text) => {
@@ -323,6 +324,25 @@ export default function BookingPage() {
       showToast('err', 'Xác nhận thất bại, vui lòng thử lại.')
     } finally {
       setConfirming(false)
+    }
+  }
+
+  const handleCancelBankTransfer = async () => {
+    if (!bankInfo?.donDatVeId) {
+      setBankModal(false)
+      return
+    }
+    try {
+      await paymentService.cancelBankTransfer(bankInfo.donDatVeId)
+      showToast('success', 'Đã hủy đơn hàng và nhả ghế thành công.')
+    } catch {
+      showToast('err', 'Có lỗi xảy ra khi hủy đơn.')
+    } finally {
+      setBankModal(false)
+      setConfirmCancelModal(false)
+      setStep(1)
+      setSelectedSeats([])
+      setExpired(false)
     }
   }
 
@@ -538,16 +558,11 @@ export default function BookingPage() {
                   ))}
                 </div>
 
-                {/* Lỗi ghế */}
+                {/* Toast */}
                 {toast && (
                   <div className="mb-4">
                     <Toast type={toast.type} message={toast.text} />
                   </div>
-                )}
-                {error && (
-                  <p className="text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 text-center">
-                    {error}
-                  </p>
                 )}
               </div>
             )}
@@ -825,11 +840,18 @@ export default function BookingPage() {
 
               {/* CTA */}
               {step === 1 && (
-                <button onClick={() => { if (selectedSeats.length > 0) setStep(2) }}
-                  disabled={selectedSeats.length === 0}
-                  className="w-full btn-primary py-2.5 text-sm font-bold disabled:opacity-30 disabled:cursor-not-allowed">
-                  Tiếp tục →
-                </button>
+                <div className="space-y-3">
+                  {error && (
+                    <p className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2 text-center">
+                      {error}
+                    </p>
+                  )}
+                  <button onClick={() => { if (selectedSeats.length > 0) setStep(2) }}
+                    disabled={selectedSeats.length === 0}
+                    className="w-full btn-primary py-2.5 text-sm font-bold disabled:opacity-30 disabled:cursor-not-allowed">
+                    Tiếp tục →
+                  </button>
+                </div>
               )}
               {step === 2 && (
                 <button onClick={goToStep3}
@@ -904,15 +926,45 @@ export default function BookingPage() {
 
               <p className="text-white/30 text-xs text-center">Quét mã QR hoặc chuyển khoản theo thông tin trên, sau đó nhấn xác nhận.</p>
 
-              <button
-                onClick={handleConfirmBankTransfer}
-                disabled={confirming}
-                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {confirming
-                  ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Đang xác nhận...</>
-                  : 'Tôi đã chuyển khoản xong'}
-              </button>
+              <div className="flex flex-col gap-3 w-full">
+                <button
+                  onClick={handleConfirmBankTransfer}
+                  disabled={confirming}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {confirming
+                    ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Đang xác nhận...</>
+                    : 'Tôi đã chuyển khoản xong'}
+                </button>
+                <button
+                  onClick={() => setConfirmCancelModal(true)}
+                  disabled={confirming}
+                  className="w-full bg-transparent border border-white/20 hover:border-white/50 text-white/70 hover:text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50 text-sm"
+                >
+                  Hủy thanh toán
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== CANCEL CONFIRM MODAL ===== */}
+      {confirmCancelModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+          <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 w-full max-w-sm text-center">
+            <div className="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h3 className="text-base font-bold text-white mb-2">Hủy đơn đặt vé?</h3>
+            <p className="text-sm text-white/40 mb-6">Bạn có chắc chắn muốn hủy thanh toán này không? Các ghế đang giữ sẽ bị hủy.</p>
+            <div className="flex gap-3">
+              <button onClick={() => setConfirmCancelModal(false)}
+                className="flex-1 border border-white/20 hover:border-white/40 text-white/70 hover:text-white text-sm py-2.5 rounded-xl transition-colors font-bold">Hủy bỏ</button>
+              <button onClick={handleCancelBankTransfer}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white text-sm py-2.5 rounded-xl transition-colors font-bold">Đồng ý</button>
             </div>
           </div>
         </div>

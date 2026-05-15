@@ -128,7 +128,7 @@ namespace MovieBooking.Infrastructure.Services
                     LichChieuId = bookingRequest.LichChieuId,
                     TongTien    = tongTien,
                     TrangThai   = BookingStatus.Pending.ToString(),
-                    ExpiredAt   = DateTime.Now.AddMinutes(15), // Hết hạn giữ ghế sau 15 phút
+                    ExpiredAt   = DateTime.Now.AddMinutes(5), // Hết hạn giữ ghế sau 5 phút
                     Ves         = vesChiTiet
                 };
 

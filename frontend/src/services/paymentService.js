@@ -7,6 +7,8 @@ const paymentService = {
     api.get(`/payment/bank-transfer/info/${donDatVeId}`),
   confirmBankTransfer: (donDatVeId) =>
     api.post('/payment/bank-transfer/confirm', { donDatVeId }),
+  cancelBankTransfer: (donDatVeId) =>
+    api.post('/payment/bank-transfer/cancel', { donDatVeId }),
 }
 
 export default paymentService

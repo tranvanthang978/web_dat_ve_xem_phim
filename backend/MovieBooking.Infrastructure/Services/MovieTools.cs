@@ -40,6 +40,7 @@ namespace MovieBooking.Infrastructure.Services
         {
             var phims = await _context.Phims
                 .Where(p => p.DangChieu)
+                .OrderByDescending(p => p.Id)
                 .Select(p => new { p.TenPhim, p.TheLoai, p.ThoiLuong, p.XepHang })
                 .ToListAsync();
 
@@ -55,6 +56,7 @@ namespace MovieBooking.Infrastructure.Services
         {
             var phims = await _context.Phims
                 .Where(p => !p.DangChieu)
+                .OrderByDescending(p => p.Id)
                 .Select(p => new { p.TenPhim, p.TheLoai, p.ThoiLuong })
                 .ToListAsync();
 
